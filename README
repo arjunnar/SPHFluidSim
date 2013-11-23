@@ -1,0 +1,47 @@
+Arjun Veer Narayanan
+6.837 Fall 2013 
+Assignment 4
+
+1) How do you compile and run your code? Provide instructions for Athena Linux? 
+
+Just call the make command in the pset directory. Then run the a4 executable specifying the appropiate arguments. An example is provided below: 
+
+./a4 -input scene01_plane.txt -size 200 200 -output output01.bmp -depth 8 20 depth01.bmp
+
+In -input, just specify the input scene file. 
+In -size, specify the width and the height of the image (in that order). My code does support different aspect ratios so you aren't limited to square images. 
+In -output specify the file to put the rendered image. 
+In -depth specify the minDepthVal, the maxDepthVal, and the file to put the depth image (this was for task 8 of the pset). Note that the -depth tag is optional. 
+
+You can also render all the scenes at once using the test_cases.sh script. This will put the rendered images in a separate folder called outputImages. 
+
+2) Did you collaborate with anyone in the class? If so, let us know who you
+talked to and what sort of help you gave or received? 
+
+I collaborated with Lucas Smyk and Raluca Ifrim. We discussed general ideas and approaches, but wrote our code completely independently. 
+
+3) Were there any references (books, papers, websites, etc.) that you found
+particularly helpful for completing your assignment? Please provide a list.
+
+I mainly used the class lecture notes. 
+
+4) Are there any known problems with your code? If so, please provide a list
+and, if possible, describe what you think the cause is and how you might
+fix them if you had more time or motivation. This is very important, as
+we're much more likely to assign partial credit if you help us understand
+what's going on? 
+
+There are no issues that I know about. 
+
+5) Did you do any of the extra credit? If so, let us know how to use the additional features. If there was a substantial amount of work involved, describe what/how you did it?
+
+- I implemented a fog effect. In general, more distant objects are made more foggy than closer objects. In a sense, I superimpose the depth image on top of the normal image. You can specify the fog color, the minFogTVal and the maxFogTVal in the scene file. All the data will be parsed by the SceneParser and used accordingly. Of course, including fog in the scene file is optional. In the folder extraCreditImages, I've included images of white and purple fog. 
+
+- I also started implementing cylinders. As of now, my code only supports right circular cylinders oriented around the y axis. I also render only the side of the cylinder not the bases. Cylinders can be specified in the scene file like any other object. A cylinder needs three arguments: the radius, the height, the center of the bottom base of the cylinder, and the axis. Axis can be 0, 1, or 2. 0 means the cylinder will be on the y axis, 1 means the x axis, and 2 means the z. As I mentioned though, at this point I only support the y axis or axis = 0. In the extraCreditImages folder, I've included an image of a rendered cylinder.  
+
+NOTE: For the cylinders, I almost have the code working to render the bases and use all three possible axises. To render the bases, I checked intersections with the planes defined by the bases, and then checked if the intersection was within the circular base. This code is almost complete, but is having some issues. I did 
+
+6) Got any comments about this assignment that you'd like to share?
+
+The assignment was really fun. It was challenging and rewarding. 
+
