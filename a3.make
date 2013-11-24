@@ -76,6 +76,7 @@ OBJECTS := \
 	$(OBJDIR)/simpleSystem.o \
 	$(OBJDIR)/TimeStepper.o \
 	$(OBJDIR)/PhysicsUtilities.o \
+	$(OBJDIR)/ParticleGrid.o \
 
 RESOURCES := \
 
@@ -158,6 +159,9 @@ $(OBJDIR)/TimeStepper.o: src/TimeStepper.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/PhysicsUtilities.o: src/PhysicsUtilities.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/ParticleGrid.o: src/ParticleGrid.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
