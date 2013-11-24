@@ -29,12 +29,22 @@ Vector3f PhysicsUtilities::getDragForce(float dragConstant, Vector3f velocityVec
     return -1.0 * dragConstant * velocityVector;
 }
 
-Vector3f PhysicsUtilities::getPositionOfParticle(vector<Vector3f> state, int particleNum)
+Vector3f PhysicsUtilities::getPressureForce(float mi,
+                                            float pi,
+                                            float pj,
+                                            float densityj,
+                                            Vector3f gradKernel)
+{
+    float avgPressure = (pi + pj) / 2.0;
+    return (-1.0 * mi * avgPressure / densityj) * gradKernel;
+}
+
+Vector3f PhysicsUtilities::getPositionOfParticle(vector<Vector3f> &state, int particleNum)
 {
     return state[2 * particleNum];
 }
 
-Vector3f PhysicsUtilities::getVelocityOfParticle(vector<Vector3f> state, int particleNum)
+Vector3f PhysicsUtilities::getVelocityOfParticle(vector<Vector3f> &state, int particleNum)
 {
     return state[2 * particleNum + 1];
 }
@@ -43,11 +53,16 @@ void PhysicsUtilities::setPositionOfParticle(vector<Vector3f> &state, int partic
 {
     state[2 * particleNum] = position;
 }
+
 void PhysicsUtilities::setVelocityOfParticle(vector<Vector3f> &state, int particleNum, Vector3f velocity)
 {
     state[2 * particleNum + 1] = velocity;
 }
 
+float PhysicsUtilities::getPressureAtLocation(float densityAtLoc, float restDensity, float gasConstant)
+{
+    return gasConstant * (densityAtLoc - restDensity);
+}
 
 
 

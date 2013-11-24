@@ -30,7 +30,7 @@ GridTestSystem::GridTestSystem(int numParticles) : ParticleSystem(numParticles)
 	// Vector3f pointThree(1.3, 3.3, .3);
 
 	// Neighbor test 2
-	/*
+
 	Vector3f pointZero(2.5, 2.5, 2.5);
 	Vector3f pointOne(2.5, 2.5, 2.1);
 	Vector3f pointTwo(2.5, 2.1, 2.5);
@@ -108,7 +108,6 @@ GridTestSystem::GridTestSystem(int numParticles) : ParticleSystem(numParticles)
 	for (int i : neighborsSix) {
 		cout << i << " \n";
 	}
-	*/
 }
 
 GridTestSystem::~GridTestSystem()

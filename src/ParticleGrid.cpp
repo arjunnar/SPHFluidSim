@@ -63,7 +63,7 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 
 	for (int iIncr = -1; iIncr <= 1; ++iIncr)
 	{
-		int iNeighbor = iParticle + iIncr;
+        int iNeighbor = iParticle + iIncr;https://github.com/
 		if (!isCoordValid(iNeighbor)) { continue; }
 
 		for (int jIncr = -1; jIncr <= 1; ++jIncr)

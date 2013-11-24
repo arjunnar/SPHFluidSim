@@ -315,7 +315,7 @@ void ClothSystem::drawAllSprings()
         for (int j = 0; j < this->width; ++j)
         {
             int indexOfParticle = this->getIndex(i, j);
-            Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(this->getState(), indexOfParticle);
+            Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, indexOfParticle);
 
             // Draw the structural springs
             glColor3f(15.0/255.0, 245.0/255.0, 214.0/255.0);
@@ -340,7 +340,7 @@ void ClothSystem::drawLinesForSprings(Vector3f posParticle, vector<int> connecte
     for (int otherParticleIndex : connectedIndexes)
     {
         glDisable(GL_LIGHTING);
-        Vector3f posOtherParticle = PhysicsUtilities::getPositionOfParticle(this->getState(), otherParticleIndex);
+        Vector3f posOtherParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, otherParticleIndex);
         glBegin(GL_LINES);
         glVertex3d(posParticle.x(), posParticle.y(), posParticle.z());
         glVertex3d(posOtherParticle.x(), posOtherParticle.y(), posOtherParticle.z());
