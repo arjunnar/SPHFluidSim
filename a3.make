@@ -68,15 +68,16 @@ ifeq ($(config),release)
 endif
 
 OBJECTS := \
-	$(OBJDIR)/camera.o \
 	$(OBJDIR)/ClothSystem.o \
+	$(OBJDIR)/PhysicsUtilities.o \
+	$(OBJDIR)/TimeStepper.o \
+	$(OBJDIR)/camera.o \
 	$(OBJDIR)/main.o \
 	$(OBJDIR)/particleSystem.o \
 	$(OBJDIR)/pendulumSystem.o \
 	$(OBJDIR)/simpleSystem.o \
-	$(OBJDIR)/TimeStepper.o \
-	$(OBJDIR)/PhysicsUtilities.o \
 	$(OBJDIR)/ParticleGrid.o \
+	$(OBJDIR)/GridTestSystem.o \
 
 RESOURCES := \
 
@@ -137,10 +138,16 @@ $(GCH): $(PCH)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 
-$(OBJDIR)/camera.o: src/camera.cpp
+$(OBJDIR)/ClothSystem.o: src/ClothSystem.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/ClothSystem.o: src/ClothSystem.cpp
+$(OBJDIR)/PhysicsUtilities.o: src/PhysicsUtilities.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/TimeStepper.o: src/TimeStepper.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/camera.o: src/camera.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/main.o: src/main.cpp
@@ -155,13 +162,10 @@ $(OBJDIR)/pendulumSystem.o: src/pendulumSystem.cpp
 $(OBJDIR)/simpleSystem.o: src/simpleSystem.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/TimeStepper.o: src/TimeStepper.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/PhysicsUtilities.o: src/PhysicsUtilities.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/ParticleGrid.o: src/ParticleGrid.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/GridTestSystem.o: src/GridTestSystem.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

@@ -11,6 +11,7 @@
 #include "simpleSystem.h"
 #include "pendulumSystem.h"
 #include "ClothSystem.h"
+#include "GridTestSystem.h"
 
 using namespace std;
 
@@ -30,13 +31,6 @@ namespace
     TimeStepper *timeStepper;
     float stepSize;
 
-    enum SystemType
-    {
-        SIMPLE_SYSTEM,
-        PENDULUM_SYSTEM,
-        CLOTH_SYSTEM
-    };
-
     enum IntegratorType
     {
         FORWARD_EULER,
@@ -44,7 +38,6 @@ namespace
         RUNGE_KUTTA
     };
 
-    SystemType systemType;
     IntegratorType integratorType;
 
   void initSystem(int argc, char * argv[])
@@ -52,60 +45,14 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    char *systemChar = argv[1];
 
-    if (*systemChar == 's')
-    {
-        systemType = SIMPLE_SYSTEM;
-        system = new SimpleSystem();
-    }
+	system = new GridTestSystem(2);
 
-    else if (*systemChar == 'p')
-    {
-        systemType = PENDULUM_SYSTEM;
-        system = new PendulumSystem(pendulumSize);
-    }
+	timeStepper = new RK4();
 
-    else
-    {
-        if (*systemChar != 'c')
-        {
-            cout << "Invalid system type argument " << systemChar << "." << endl;
-            cout << "Rendering to cloth system by default." << endl;
-        }
+	integratorType = IntegratorType::RUNGE_KUTTA;
 
-        systemType = CLOTH_SYSTEM;
-        clothMoving = false;
-        system = new ClothSystem(clothHeight, clothWidth);
-    }
-
-    char* timeStepType = argv[2];
-
-    if (*timeStepType == 'e')
-    {
-        integratorType = FORWARD_EULER;
-        timeStepper = new ForwardEuler();
-    }
-
-    else if (*timeStepType == 't')
-    {
-        integratorType = TRAPEZOIDAL;
-        timeStepper = new Trapezoidal();
-    }
-
-    else
-    {
-        if (*timeStepType != 'r')
-        {
-            cout << "Invalid time step type argument " << timeStepType << "." << endl;
-            cout << "Using RK4 by default." << endl;
-        }
-
-        integratorType = RUNGE_KUTTA;
-        timeStepper = new RK4();
-    }
-
-    stepSize = (float) atof(argv[3]);
+    stepSize = .01;
   }
 
   void stepSystem()
@@ -115,20 +62,7 @@ namespace
           timeStepper->takeStep(system,stepSize);
       }
 
-      if (systemType == CLOTH_SYSTEM)
-      {
-          ClothSystem *clothSystem = (ClothSystem*) system;
-          Vector3f topLeftCornerPosition = clothSystem->getTopCornerPosition(true);
-          if (topLeftCornerPosition.z() > clothSystemZBoundaryPos)
-          {
-              clothSystem->applyVelocityToCorners(true);
-          }
 
-          else if (topLeftCornerPosition.z() < clothSystemZBoundaryNeg)
-          {
-              clothSystem->applyVelocityToCorners(false);
-          }
-      }
   }
 
   // Draw the current particle positions
@@ -200,61 +134,6 @@ namespace
                 break;
             }
 
-            case '1':
-            {
-                if (systemType != SIMPLE_SYSTEM)
-                {
-                    systemType = SIMPLE_SYSTEM;
-                    system = new SimpleSystem();
-                }
-
-                break;
-            }
-
-            case '2':
-            {
-                if (systemType != PENDULUM_SYSTEM)
-                {
-                    systemType = PENDULUM_SYSTEM;
-                    system = new PendulumSystem(pendulumSize);
-                }
-
-                break;
-            }
-
-            case '3':
-            {
-                if (systemType != CLOTH_SYSTEM)
-                {
-                    systemType = CLOTH_SYSTEM;
-                    clothMoving = false;
-                    system = new ClothSystem(clothHeight, clothWidth);
-                }
-
-                break;
-            }
-
-            case 's':
-            {
-                if (systemType == CLOTH_SYSTEM)
-                {
-                    ClothSystem *clothSystem = (ClothSystem*) system;
-                    if (clothMoving)
-                    {
-                        clothMoving = false;
-                        clothSystem->stopClothMovement();
-                    }
-
-                    else
-                    {
-                        clothMoving = true;
-                        clothSystem->applyVelocityToCorners(false);
-                    }
-
-                }
-                break;
-            }
-
             case '8':
             {
                 if (integratorType != FORWARD_EULER)
@@ -290,29 +169,10 @@ namespace
                 break;
             }
 
-            case 'w':
-            {
-                if (systemType == CLOTH_SYSTEM)
-                {
-                    ClothSystem *clothSystem = (ClothSystem*) system;
-                    clothSystem->setWind(!clothSystem->getWind());
-                }
-                break;
-            }
-
-            case 'd':
-            {
-                if (systemType == CLOTH_SYSTEM)
-                {
-                    ClothSystem *clothSystem = (ClothSystem*) system;
-                    clothSystem->setDrawShaded(!clothSystem->getDrawShaded());
-                }
-
-                break;
-            }
 
             default:
                 cout << "Unhandled key press " << key << "." << endl;
+                break;
             }
 
         glutPostRedisplay();

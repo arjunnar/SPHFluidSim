@@ -7,13 +7,21 @@
 
 #include "ParticleGrid.h"
 
-ParticleGrid::ParticleGrid(Vector3f origin, int size, int numCellsPerDimension)
+
+ParticleGrid::ParticleGrid() {
+	ParticleGrid(Vector3f::ZERO, 4, 100);
+
+}
+
+
+ParticleGrid::ParticleGrid(Vector3f origin, float size, int numCellsPerDimension)
 {
 	sideLength = size;
 	this->origin = origin;
 	topRightCorner = origin + Vector3f(size, size, size);
 	this->numCellsPerDimension = numCellsPerDimension;
 	this->gridSideLength = (sideLength * 1.0) / numCellsPerDimension;
+	baseInitGrid();
 }
 
 ParticleGrid::~ParticleGrid()
@@ -23,11 +31,11 @@ ParticleGrid::~ParticleGrid()
 void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 {
 	grid = Grid3D();
-	initGrid();
+	baseInitGrid();
 	for (int index = 0; index < particleLocations.size(); ++index)
 	{
 		Vector3f loc = particleLocations[index];
-		tuple<int, 3> gridCoords = getGridCoordinates(loc);
+		Tuple::tuple<int, 3> gridCoords = getGridCoordinates(loc);
 		int i = gridCoords[0];
 		int j = gridCoords[1];
 		int k = gridCoords[2];
@@ -39,7 +47,7 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vector3f &particleLoc)
 {
 	std::vector<int> neighborParticleIndexes;
-	tuple<int, 3> gridCoordsOfParticle = getGridCoordinates(particleLoc);
+	Tuple::tuple<int, 3> gridCoordsOfParticle = getGridCoordinates(particleLoc);
 
 	int iParticle = gridCoordsOfParticle[0];
 	int jParticle = gridCoordsOfParticle[1];
@@ -79,7 +87,7 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 }
 
 // Helper functions
-void ParticleGrid::initGrid()
+void ParticleGrid::baseInitGrid()
 {
 	for (int i = 0; i < numCellsPerDimension; ++i)
 	{
@@ -100,12 +108,12 @@ inline bool ParticleGrid::isCoordValid(int val)
 	return 0 <= val && val < numCellsPerDimension;
 }
 
-tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
+Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
 {
 	int i = (int) ( particleLoc.x() / gridSideLength );
 	int j = (int) ( particleLoc.y() / gridSideLength );
 	int k = (int) ( particleLoc.z() / gridSideLength );
-	return tuple<int, 3>(i, j, k);
+	return Tuple::tuple<int, 3>(i, j, k);
 }
 
 

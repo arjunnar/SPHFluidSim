@@ -4,7 +4,8 @@ obj/Debug/main.o: src/main.cpp src/extra.h vecmath/include/vecmath.h \
  vecmath/include/Vector2f.h vecmath/include/Vector3f.h \
  vecmath/include/Vector4f.h src/camera.h src/TimeStepper.h \
  src/particleSystem.h src/simpleSystem.h src/pendulumSystem.h \
- src/ClothSystem.h src/PhysicsUtilities.h
+ src/ClothSystem.h src/PhysicsUtilities.h src/GridTestSystem.h \
+ src/ParticleGrid.h src/tuple.h
 
 src/extra.h:
 
@@ -37,3 +38,9 @@ src/pendulumSystem.h:
 src/ClothSystem.h:
 
 src/PhysicsUtilities.h:
+
+src/GridTestSystem.h:
+
+src/ParticleGrid.h:
+
+src/tuple.h:
