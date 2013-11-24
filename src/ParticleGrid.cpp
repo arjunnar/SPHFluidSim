@@ -8,9 +8,9 @@
 #include "ParticleGrid.h"
 
 
-ParticleGrid::ParticleGrid() {
+ParticleGrid::ParticleGrid()
+{
 	ParticleGrid(Vector3f::ZERO, 4, 100);
-
 }
 
 
@@ -42,6 +42,14 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 
 		grid[i][j][k].push_back(index);
 	}
+}
+
+Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
+{
+	int i = (int) ( particleLoc.x() / gridSideLength );
+	int j = (int) ( particleLoc.y() / gridSideLength );
+	int k = (int) ( particleLoc.z() / gridSideLength );
+	return Tuple::tuple<int, 3>(i, j, k);
 }
 
 std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vector3f &particleLoc)
@@ -106,14 +114,6 @@ void ParticleGrid::baseInitGrid()
 inline bool ParticleGrid::isCoordValid(int val)
 {
 	return 0 <= val && val < numCellsPerDimension;
-}
-
-Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
-{
-	int i = (int) ( particleLoc.x() / gridSideLength );
-	int j = (int) ( particleLoc.y() / gridSideLength );
-	int k = (int) ( particleLoc.z() / gridSideLength );
-	return Tuple::tuple<int, 3>(i, j, k);
 }
 
 

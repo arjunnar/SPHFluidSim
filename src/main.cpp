@@ -45,7 +45,6 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-
 	system = new GridTestSystem(2);
 
 	timeStepper = new RK4();
@@ -61,8 +60,6 @@ namespace
       {
           timeStepper->takeStep(system,stepSize);
       }
-
-
   }
 
   // Draw the current particle positions
@@ -85,7 +82,6 @@ namespace
     glScaled(50.0f,0.01f,50.0f);
     glutSolidCube(1);
     glPopMatrix();
-    
   }
         
 

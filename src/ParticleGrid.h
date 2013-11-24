@@ -12,6 +12,7 @@
 #include "tuple.h"
 
 typedef std::vector<std::vector<std::vector<std::vector<int> > > > Grid3D;
+using namespace std;
 
 class ParticleGrid
 {
@@ -24,6 +25,9 @@ public:
 	std::vector<int> getNeighborParticleIndexes(int ParticleIndex, Vector3f &particleLoc);
 	void initializeGrid(std::vector<Vector3f> &particleLocations);
 
+	// Made this public for testing purposes only
+	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
+
 private:
 	// Instance variables
 	float sideLength;
@@ -35,7 +39,6 @@ private:
 
 	// Helper functions
 	void baseInitGrid();
-	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
 	inline bool isCoordValid(int val);
 };
 
