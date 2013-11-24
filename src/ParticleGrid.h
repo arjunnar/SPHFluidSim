@@ -21,18 +21,22 @@ class ParticleGrid
 public:
 	ParticleGrid(Vector3f origin, int size, int gridSideLength);
 	virtual ~ParticleGrid();
-	std::vector<int> getNeighborParticles(Vector3f &particleLoc);
+	std::vector<int> getNeighborParticleIndexes(int ParticleIndex, Vector3f &particleLoc);
 	void initializeGrid(std::vector<Vector3f> &particleLocations);
 
 private:
+	// Instance variables
 	int sideLength;
 	Vector3f origin;
 	Vector3f topRightCorner;
 	Grid3D grid;
 	int numCellsPerDimension;
 	float gridSideLength;
+
+	// Helper functions
 	void initGrid();
 	tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
+	inline bool isCoordValid(int val);
 };
 
 #endif /* PARTICLEGRID_H_ */

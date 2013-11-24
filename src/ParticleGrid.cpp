@@ -36,13 +36,46 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 	}
 }
 
-std::vector<int> ParticleGrid::getNeighborParticles(Vector3f &particleLoc)
+std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vector3f &particleLoc)
 {
-	tuple<int, 3> gridCoords = getGridCoordinates(particleLoc);
-	int i = gridCoords[0];
-	int j = gridCoords[1];
-	int k = gridCoords[2];
-	return grid[i][j][k];
+	std::vector<int> neighborParticleIndexes;
+	tuple<int, 3> gridCoordsOfParticle = getGridCoordinates(particleLoc);
+
+	int iParticle = gridCoordsOfParticle[0];
+	int jParticle = gridCoordsOfParticle[1];
+	int kParticle = gridCoordsOfParticle[2];
+
+	for (int iIncr = -1; iIncr <= 1; ++iIncr)
+	{
+		int iNeighbor = iParticle + iIncr;
+		if (!isCoordValid(iNeighbor)) { continue; }
+
+		for (int jIncr = -1; jIncr <= 1; ++jIncr)
+		{
+			int jNeighbor = jParticle + jIncr;
+			if (!isCoordValid(jNeighbor)) { continue; }
+
+			for (int kIncr = -1; kIncr <= 1; ++kIncr)
+			{
+				int kNeighbor = kParticle + kIncr;
+				bool inSameCell = iNeighbor == iParticle && jNeighbor == jParticle && kNeighbor == kParticle;
+
+				if (!isCoordValid(kNeighbor)) { continue; }
+
+				std::vector<int> neighborsInCell = grid[iNeighbor][jNeighbor][kNeighbor];
+
+				for (int neighborIndex : neighborsInCell)
+				{
+					if (!inSameCell || neighborIndex != particleIndex)
+					{
+						neighborParticleIndexes.push_back(neighborIndex);
+					}
+				}
+			}
+		}
+	}
+
+	return neighborParticleIndexes;
 }
 
 // Helper functions
@@ -60,6 +93,11 @@ void ParticleGrid::initGrid()
 			}
 		}
 	}
+}
+
+inline bool ParticleGrid::isCoordValid(int val)
+{
+	return 0 <= val && val < numCellsPerDimension;
 }
 
 tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
