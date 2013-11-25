@@ -66,23 +66,49 @@ namespace
   // Draw the current particle positions
   void drawSystem()
   {
-    
     // Base material colors (they don't change)
     GLfloat particleColor[] = {0.4f, 0.7f, 1.0f, 1.0f};
     GLfloat floorColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
     
+    glTranslatef(-5.0, -2.0, 0.0);
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor);
     
-    glutSolidSphere(0.1f,10.0f,10.0f);
-    
     system->draw();
-    
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, floorColor);
-    glPushMatrix();
-    glTranslatef(0.0f,-5.0f,0.0f);
-    glScaled(50.0f,0.01f,50.0f);
-    glutSolidCube(1);
-    glPopMatrix();
+
+    // Draw the water tank
+    /*
+    glBegin(GL_QUADS);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 4.0f, 0.0f);
+    glVertex3f(0.0f, 4.0f, 4.0f);
+    glVertex3f(0.0f, 0.0f, 4.0f);
+    glEnd();
+    */
+
+    glBegin(GL_QUADS);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(9.0f, 0.0f, 0.0f);
+    glVertex3f(9.0f, 4.0f, 0.0f);
+    glVertex3f(0.0f, 4.0f, 0.0f);
+    glEnd();
+
+    /*
+    glBegin(GL_QUADS);
+    glVertex3f(4.0f, 0.0f, 0.0f);
+    glVertex3f(4.0f, 4.0f, 0.0f);
+    glVertex3f(4.0f, 4.0f, 4.0f);
+    glVertex3f(4.0f, 0.0f, 4.0f);
+    glEnd();
+    */
+    /*
+    glBegin(GL_QUADS);
+    glVertex3f(0.0f, 0.0f, 2.0f);
+    glVertex3f(2.0f, 0.0f, 2.0f);
+    glVertex3f(2.0f, 2.0f, 2.0f);
+    glVertex3f(0.0f, 2.0f, 2.0f);
+    glEnd();
+    */
   }
         
 
@@ -192,7 +218,8 @@ namespace
         if (state == GLUT_DOWN)
         {
             g_mousePressed = true;
-            
+
+            //No rotating the camera for now
             switch (button)
             {
             case GLUT_LEFT_BUTTON:
@@ -206,7 +233,8 @@ namespace
                 break;
             default:
                 break;
-            }                       
+            }
+
         }
         else
         {
@@ -253,8 +281,8 @@ namespace
         glShadeModel(GL_SMOOTH);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
 
         // Clear to black
         glClearColor(0,0,0,1);
@@ -276,8 +304,6 @@ namespace
         glLightfv(GL_LIGHT0, GL_POSITION, Lt0pos);
 
         glLoadMatrixf( camera.viewMatrix() );
-
-        // THIS IS WHERE THE DRAW CODE GOES.
 
         drawSystem();
 
@@ -339,14 +365,14 @@ int main( int argc, char* argv[] )
 
     // Initial parameters for window position and size
     glutInitWindowPosition( 60, 60 );
-    glutInitWindowSize( 600, 600 );
+    glutInitWindowSize( 500, 600 );
     
-    camera.SetDimensions( 600, 600 );
+    camera.SetDimensions( 500, 600 );
 
     camera.SetDistance( 10 );
-    camera.SetCenter( Vector3f::ZERO );
+    camera.SetCenter(Vector3f::ZERO);
     
-    glutCreateWindow("Assignment 3");
+    glutCreateWindow("SPH Fluid Simulation");
 
     // Initialize OpenGL parameters.
     initRendering();
@@ -370,7 +396,6 @@ int main( int argc, char* argv[] )
 
     // Trigger timerFunc every 20 msec
     glutTimerFunc(20, timerFunc, 20);
-
         
     // Start the main loop.  glutMainLoop never returns.
     glutMainLoop();

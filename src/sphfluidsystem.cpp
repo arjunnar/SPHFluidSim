@@ -151,20 +151,15 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
 void SPHFluidSystem::draw()
 {
-    glDisable(GL_LIGHTING);
-    glColor3f(245/255.0, 15.0/255.0, 222.0/255.0);
-
     for (int i = 0; i < m_numParticles; i++)
     {
         // Draw the particles
         Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
         glPushMatrix();
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-        glutSolidSphere(0.0450f,10.0f,10.0f);
+        glutSolidSphere(0.0350f,10.0f,10.0f);
         glPopMatrix();
     }
-
-    glEnable(GL_LIGHTING);
 }
 
 void SPHFluidSystem::reinitializeSystem()
