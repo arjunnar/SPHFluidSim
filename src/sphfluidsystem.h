@@ -25,12 +25,12 @@ class SPHFluidSystem : public ParticleSystem
         ParticleGrid particleGrid;
         map<int, float> densityCache;
         float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
-        static constexpr float PARTICLE_MASS = 1.0;
-        static constexpr float GRAVITY_CONSTANT = 1.0;
-        static constexpr float REST_DENSITY = 1.0;
-        static constexpr float GAS_CONSTANT = 2.0;
-        static constexpr float GRID_DIMENSION = 0.2;
-        static constexpr float H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
+        float PARTICLE_MASS;
+        float GRAVITY_CONSTANT;
+        float REST_DENSITY;
+        float GAS_CONSTANT;
+        float GRID_DIMENSION;
+        float H_CONSTANT;
 };
 
 #endif // SPHFLUIDSYSTEM_H
