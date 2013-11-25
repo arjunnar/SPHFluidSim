@@ -122,7 +122,7 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 				for (int neighborIndex : neighborsInCell)
 				{
 					if (!inSameCell || neighborIndex != particleIndex)
-					{
+                    {
 						neighborParticleIndexes.push_back(neighborIndex);
 					}
 				}

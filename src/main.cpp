@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 100;
+int numParticles = 197;
 
 // For movement of the cloth along the z axis
 float clothSystemZBoundaryPos = 6.0;
@@ -45,7 +45,7 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    system = new SPHFluidSystem(17);
+    system = new SPHFluidSystem(numParticles);
 
 	timeStepper = new RK4();
 

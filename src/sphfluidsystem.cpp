@@ -26,7 +26,14 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 
     for (int i = 0; i < 97; ++i)
     {
-        Vector3f point(1.0 + i * .001, 1.0, 1.0);
+        Vector3f point(1.0 + i * .005, 1.0, 1.0);
+        m_vVecState.push_back(point);
+        m_vVecState.push_back(Vector3f::ZERO);
+    }
+
+    for (int i = 0; i < 97; ++i)
+    {
+        Vector3f point(1.0 + i * .005, 1.001, 1.0 );
         m_vVecState.push_back(point);
         m_vVecState.push_back(Vector3f::ZERO);
     }
@@ -116,7 +123,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         Vector3f velocity = PhysicsUtilities::getVelocityOfParticle(state, particleIndex);
         Vector3f acceleration = totalForce / densityAtParticleLoc;
 
-        /* HACKY
+        // HACKY
         float forceEpsilon = 0.005;
         if (totalForce.abs() > forceEpsilon)
         {
@@ -128,7 +135,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         {
             acceleration = Vector3f::ZERO;
         }
-        */
+
 
 
         derivative.push_back(velocity);
