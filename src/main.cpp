@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 197;
+int numParticles = 103;
 
 // For movement of the cloth along the z axis
 float clothSystemZBoundaryPos = 6.0;

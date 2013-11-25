@@ -11,6 +11,16 @@ SPHFluidSystem::SPHFluidSystem()
 
 SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
+    PARTICLE_MASS = 1.0;
+    GRAVITY_CONSTANT = 1.0;
+    REST_DENSITY = 1.0;
+    GAS_CONSTANT = 2.0;
+    GRID_DIMENSION = 0.2;
+    H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
+
+
+
+
     Vector3f pointOne(1.5, 1.5, 1.5);
     Vector3f pointTwo(1.51, 1.5, 1.5);
     Vector3f pointThree(1.5, 1.5, 1.51);
@@ -24,19 +34,17 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
     m_vVecState.push_back(Vector3f::ZERO);
 
 
-    for (int i = 0; i < 97; ++i)
+    for (int i = 0; i < 10; ++i)
     {
-        Vector3f point(1.0 + i * .005, 1.0, 1.0);
-        m_vVecState.push_back(point);
-        m_vVecState.push_back(Vector3f::ZERO);
+    	for (int k = 0; k < 10; ++k) {
+            Vector3f point(1.0 + i * .01, 1.0, 1.0 +  k * .01);
+            m_vVecState.push_back(point);
+            m_vVecState.push_back(Vector3f::ZERO);
+    	}
+
     }
 
-    for (int i = 0; i < 97; ++i)
-    {
-        Vector3f point(1.0 + i * .005, 1.001, 1.0 );
-        m_vVecState.push_back(point);
-        m_vVecState.push_back(Vector3f::ZERO);
-    }
+
 
     /*
     for (int i = 0; i < 5; ++i)
