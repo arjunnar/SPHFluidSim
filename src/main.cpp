@@ -62,15 +62,14 @@ namespace
       }
 
       // Collision detection
-
+      /*
       vector<Vector3f> state = system->getState();
       for (int i = 0; i < numParticles; ++i)
       {
           Vector3f pos = state[2 * i];
           Vector3f vel = state[2 * i + 1];
-
-
       }
+      */
   }
 
 

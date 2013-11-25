@@ -30,10 +30,10 @@ Vector3f PhysicsUtilities::getDragForce(float dragConstant, Vector3f velocityVec
 }
 
 Vector3f PhysicsUtilities::getPressureForce(float mi,
-                                            float pi,
-                                            float pj,
-                                            float densityj,
-                                            Vector3f gradKernel)
+                                            	float pi,
+                                            	float pj,
+                                            	float densityj,
+                                            	Vector3f gradKernel)
 {
     float avgPressure = (pi + pj) / 2.0;
     return (-1.0 * mi * avgPressure / densityj) * gradKernel;

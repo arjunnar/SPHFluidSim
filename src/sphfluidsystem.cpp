@@ -11,20 +11,16 @@ SPHFluidSystem::SPHFluidSystem()
 
 SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
-    PARTICLE_MASS = 1.0;
+    PARTICLE_MASS = 0.0001;
     GRAVITY_CONSTANT = 1.0;
-    REST_DENSITY = 1.0;
-    GAS_CONSTANT = 2.0;
+    REST_DENSITY = 0.0;
+    GAS_CONSTANT = 0.005;
     GRID_DIMENSION = 0.2;
     H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
-
-
-
 
     Vector3f pointOne(1.5, 1.5, 1.5);
     Vector3f pointTwo(1.51, 1.5, 1.5);
     Vector3f pointThree(1.5, 1.5, 1.51);
-
 
     m_vVecState.push_back(pointOne);
     m_vVecState.push_back(Vector3f::ZERO);
@@ -32,7 +28,6 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
     m_vVecState.push_back(Vector3f::ZERO);
     m_vVecState.push_back(pointThree);
     m_vVecState.push_back(Vector3f::ZERO);
-
 
     for (int i = 0; i < 10; ++i)
     {
@@ -43,17 +38,6 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
     	}
 
     }
-
-
-
-    /*
-    for (int i = 0; i < 5; ++i)
-    {
-        Vector3f point(1.0 + i * .01, 1.005, 1.0);
-        m_vVecState.push_back(point);
-        m_vVecState.push_back(Vector3f::ZERO);
-    }
-    */
 
     Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, 2.0);
@@ -68,8 +52,8 @@ SPHFluidSystem::~SPHFluidSystem()
 
 vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 {
-    //vector<Vector3f> particlePositions = PhysicsUtilities::getParticlePositions(state);
-    //particleGrid.initializeGrid(particlePositions);
+    vector<Vector3f> particlePositions = PhysicsUtilities::getParticlePositions(state);
+    particleGrid.initializeGrid(particlePositions);
 
     vector<Vector3f> derivative;
     for (int particleIndex = 0; particleIndex < m_numParticles; ++particleIndex)
@@ -79,6 +63,8 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         vector<int> neighborIndexes = particleGrid.getNeighborParticleIndexes(particleIndex, position);
 
         float densityAtParticleLoc = calcDensity(particleIndex, neighborIndexes, state); // densityi
+
+        float densityEpsilon = 0.00005;
 
         //cout << "Density at particle loc: " << densityAtParticleLoc << "\n";
 
@@ -102,17 +88,27 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
                                                      neighborsOfNeighbor,
                                                      state); // densityj
 
-            // Calculate pressure at neighbor location
-            float pressureAtNeighborLoc = PhysicsUtilities::getPressureAtLocation(densityAtNeighborLoc,
+            Vector3f pressureContribution;
+
+            if (neighborsOfNeighbor.size() == 0)
+            {
+            	pressureContribution = Vector3f::ZERO;
+            }
+
+            else
+            {
+            	// Calculate pressure at neighbor location
+            	float pressureAtNeighborLoc = PhysicsUtilities::getPressureAtLocation(densityAtNeighborLoc,
                                                                                   REST_DENSITY,
                                                                                   GAS_CONSTANT); // pj
 
-            Vector3f spikyKernelGrad = KernelUtilities::gradSpikyKernel(position - neighborPos, H_CONSTANT);
-            Vector3f pressureContribution = PhysicsUtilities::getPressureForce( PARTICLE_MASS,
+            	Vector3f spikyKernelGrad = KernelUtilities::gradSpikyKernel(position - neighborPos, H_CONSTANT);
+            	pressureContribution = PhysicsUtilities::getPressureForce( PARTICLE_MASS,
                                                                                 pressureAtParticleLoc,
                                                                                 pressureAtNeighborLoc,
                                                                                 densityAtNeighborLoc,
                                                                                 spikyKernelGrad );
+            }
 
             totalPressureForce += pressureContribution;
         }
@@ -130,8 +126,6 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
         Vector3f velocity = PhysicsUtilities::getVelocityOfParticle(state, particleIndex);
         Vector3f acceleration;
-
-        float densityEpsilon = 0.000005;
 
         if (densityAtParticleLoc < densityEpsilon)
         {

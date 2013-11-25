@@ -46,8 +46,8 @@ float KernelUtilities::polySixKernel(Vector3f r, float h)
 
 	if (rmag <= h)
 	{
-		float constant = 315/(64 * M_PI * pow(h, 9.0) );
-		float innerPart = pow( (pow(h, 2.0) - pow(rmag, 2)), 3);
+		float constant = 315.0/(64.0 * M_PI * pow(h, 9.0) );
+		float innerPart = pow( (pow(h, 2.0) - pow(rmag, 2.0)), 3.0);
 		result = constant * innerPart;
 	}
 
