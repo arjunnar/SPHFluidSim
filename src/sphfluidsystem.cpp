@@ -121,22 +121,19 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
           //   << " , " << totalForce.z() << " > " << endl;
 
         Vector3f velocity = PhysicsUtilities::getVelocityOfParticle(state, particleIndex);
-        Vector3f acceleration = totalForce / densityAtParticleLoc;
+        Vector3f acceleration;
 
-        // HACKY
-        float forceEpsilon = 0.005;
-        if (totalForce.abs() > forceEpsilon)
+        float densityEpsilon = 0.000005;
+
+        if (densityAtParticleLoc < densityEpsilon)
         {
-            acceleration = totalForce / densityAtParticleLoc;
-
+        	acceleration = Vector3f::ZERO;
         }
 
         else
         {
-            acceleration = Vector3f::ZERO;
+            acceleration = totalForce / densityAtParticleLoc;
         }
-
-
 
         derivative.push_back(velocity);
         derivative.push_back(acceleration);
@@ -206,8 +203,7 @@ float SPHFluidSystem::calcDensity(int particleIndex, vector<int> &neighborIndexe
         for (int neighborI : neighborIndexes)
         {
            Vector3f neighborLoc = PhysicsUtilities::getPositionOfParticle(state, neighborI);
-           densitySum += PARTICLE_MASS * KernelUtilities::spikyKernel(particleLoc - neighborLoc, H_CONSTANT);
-         //  cout << "Spiky kernel val: "  << KernelUtilities::spikyKernel(particleLoc - neighborLoc, 100) << endl;
+           densitySum += PARTICLE_MASS * KernelUtilities::polySixKernel(particleLoc - neighborLoc, H_CONSTANT);
         }
 
         density = densitySum;

@@ -38,3 +38,23 @@ Vector3f KernelUtilities::gradSpikyKernel(Vector3f r, float h)
 
     return grad;
 }
+
+float KernelUtilities::polySixKernel(Vector3f r, float h)
+{
+	float result;
+	float rmag = r.abs();
+
+	if (rmag <= h)
+	{
+		float constant = 315/(64 * M_PI * pow(h, 9.0) );
+		float innerPart = pow( (pow(h, 2.0) - pow(rmag, 2)), 3);
+		result = constant * innerPart;
+	}
+
+	else
+	{
+		result = 0.0;
+	}
+
+	return result;
+}
