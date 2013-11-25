@@ -10,17 +10,19 @@
 #include <vector>
 #include <vecmath.h>
 #include "tuple.h"
+#include  <map>
+#include <list>
 
 typedef std::vector<std::vector<std::vector<std::vector<int> > > > Grid3D;
+
 using namespace std;
 
 class ParticleGrid
 {
 
-
 public:
 	ParticleGrid();
-	ParticleGrid(Vector3f origin, float size, int numCellsPerDimension);
+    ParticleGrid(Vector3f origin, float size);
 	virtual ~ParticleGrid();
 	std::vector<int> getNeighborParticleIndexes(int ParticleIndex, Vector3f &particleLoc);
 	void initializeGrid(std::vector<Vector3f> &particleLocations);
@@ -33,13 +35,15 @@ private:
 	float sideLength;
 	Vector3f origin;
 	Vector3f topRightCorner;
-	Grid3D grid;
-	int numCellsPerDimension;
+    static const int NUM_CELLS_PER_DIMEN = 100;
+    std::vector<std::list<int>> grid;
 	float gridSideLength;
+    map<int, Tuple::tuple<int, 3>> indexesToGridCoords;
 
 	// Helper functions
-	void baseInitGrid();
 	inline bool isCoordValid(int val);
+    inline int getGridIndex(int i, int j, int k);
+    inline std::list<int> getGridListAt(int i, int j, int k);
 };
 
 #endif /* PARTICLEGRID_H_ */

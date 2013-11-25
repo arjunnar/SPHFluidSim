@@ -69,6 +69,7 @@ endif
 
 OBJECTS := \
 	$(OBJDIR)/main.o \
+	$(OBJDIR)/debugutilities.o \
 	$(OBJDIR)/camera.o \
 	$(OBJDIR)/kernelutilities.o \
 	$(OBJDIR)/ParticleGrid.o \
@@ -141,6 +142,9 @@ $(GCH): $(PCH)
 endif
 
 $(OBJDIR)/main.o: src/main.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/debugutilities.o: src/debugutilities.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/camera.o: src/camera.cpp

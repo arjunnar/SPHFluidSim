@@ -12,6 +12,7 @@
 #include "pendulumSystem.h"
 #include "ClothSystem.h"
 #include "GridTestSystem.h"
+#include "sphfluidsystem.h"
 
 using namespace std;
 
@@ -45,13 +46,13 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-	system = new GridTestSystem(2);
+    system = new SPHFluidSystem(200);
 
 	timeStepper = new RK4();
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = .01;
+    stepSize = 0.02;
   }
 
   void stepSystem()

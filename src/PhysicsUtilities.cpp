@@ -54,6 +54,17 @@ void PhysicsUtilities::setPositionOfParticle(vector<Vector3f> &state, int partic
     state[2 * particleNum] = position;
 }
 
+vector<Vector3f> PhysicsUtilities::getParticlePositions(vector<Vector3f> &state)
+{
+    vector<Vector3f> particlePositions;
+    for (int i = 0; i < state.size(); i += 2)
+    {
+        particlePositions.push_back(state[i]);
+    }
+
+    return particlePositions;
+}
+
 void PhysicsUtilities::setVelocityOfParticle(vector<Vector3f> &state, int particleNum, Vector3f velocity)
 {
     state[2 * particleNum + 1] = velocity;

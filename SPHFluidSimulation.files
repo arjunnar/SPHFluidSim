@@ -42,3 +42,5 @@ src/sphfluidsystem.h
 src/sphfluidsystem.cpp
 src/kernelutilities.h
 src/kernelutilities.cpp
+src/debugutilities.h
+src/debugutilities.cpp

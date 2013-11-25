@@ -25,6 +25,7 @@ public:
     static Vector3f getVelocityOfParticle(vector<Vector3f> &state, int particleNum);
     static void setPositionOfParticle(vector<Vector3f> &state, int particleNum, Vector3f position);
     static void setVelocityOfParticle(vector<Vector3f> &state, int particleNum, Vector3f velocity);
+    static vector<Vector3f> getParticlePositions(vector<Vector3f> &state);
 
     static float getPressureAtLocation(float desntiyAtLoc, float restDensity, float gasConstant);
     static Vector3f getPressureForce(float mi,

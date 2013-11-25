@@ -22,7 +22,7 @@ public:
 	vector<Vector3f> getState(){ return m_vVecState; };
 	
 	// Setter method for the system's state
-	void setState(const vector<Vector3f>  & newState) { m_vVecState = newState; };
+    virtual void setState(const vector<Vector3f>  & newState) { m_vVecState = newState; };
 	
 	virtual void reinitializeSystem() = 0;
 

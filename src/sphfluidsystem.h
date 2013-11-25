@@ -7,10 +7,11 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include "debugutilities.h"
 
 using namespace std;
 
-class SPHFluidSystem : ParticleSystem
+class SPHFluidSystem : public ParticleSystem
 {
    public:
         SPHFluidSystem();
@@ -23,11 +24,11 @@ class SPHFluidSystem : ParticleSystem
         ParticleGrid particleGrid;
         map<int, float> densityCache;
         float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
-        static constexpr float PARTICLE_MASS = 0.10;
+        static constexpr float PARTICLE_MASS = 1.0;
         static constexpr float GRAVITY_CONSTANT = 1.0;
-        static constexpr float REST_DENSITY = 1.0;
-        static constexpr float GAS_CONSTANT = 1.0;
-        static constexpr float GRID_DIMENSION = 0.1;
+        static constexpr float REST_DENSITY = 0.0;
+        static constexpr float GAS_CONSTANT = 8.31;
+        static constexpr float GRID_DIMENSION = 0.2;
         static constexpr float H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
 };
 
