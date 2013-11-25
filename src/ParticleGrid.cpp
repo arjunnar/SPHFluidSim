@@ -45,6 +45,11 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 		int j = gridCoords[1];
 		int k = gridCoords[2];
 
+		if ( !(isCoordValid(i) && isCoordValid(j) && isCoordValid(k)) )
+		{
+			continue;
+		}
+
         bool oldCoordsInMap = indexesToGridCoords.find(pIndex) != indexesToGridCoords.end();
 
         int oldi;
@@ -82,6 +87,9 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
         }
 	}
 }
+
+
+
 
 Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
 {

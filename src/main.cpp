@@ -18,6 +18,7 @@ using namespace std;
 
 // Globals here.
 int numParticles = 103;
+float boxSize = 2.0;
 
 // For movement of the cloth along the z axis
 float clothSystemZBoundaryPos = 6.0;
@@ -54,6 +55,29 @@ namespace
     stepSize = 0.02;
   }
 
+  bool fixCoord(float &coord, float &vel)
+  {
+	  float collisionEpsilon = 0.1;
+	  bool fixed = false;
+
+	  if (coord < 0.0f + collisionEpsilon)
+	  {
+		  coord = collisionEpsilon;
+		  vel = 0.0f;
+		  fixed = true;
+	  }
+
+	  else if (coord > boxSize - collisionEpsilon)
+	  {
+		  coord = boxSize - 1.1 * collisionEpsilon;
+		  vel = 0.0f;
+		  fixed = true;
+	  }
+
+	  return fixed;
+   }
+
+
   void stepSystem()
   {
       if(timeStepper!=0)
@@ -62,16 +86,36 @@ namespace
       }
 
       // Collision detection
-      /*
-      vector<Vector3f> state = system->getState();
-      for (int i = 0; i < numParticles; ++i)
-      {
-          Vector3f pos = state[2 * i];
-          Vector3f vel = state[2 * i + 1];
-      }
-      */
-  }
 
+      vector<Vector3f> state = system->getState();
+      for (vector<Vector3f>::iterator iter = state.begin(); iter != state.end(); iter += 2)
+      {
+          Vector3f pos = *iter;
+          Vector3f vel = *(iter + 1);
+
+          float x = pos.x();
+          float y = pos.y();
+          float z = pos.z();
+
+          float velX = vel.x();
+          float velY = vel.y();
+          float velZ = vel.z();
+
+          bool fixedX = fixCoord(x, velX);
+          bool fixedY = fixCoord(y, velY);
+          bool fixedZ = fixCoord(z, velZ);
+
+          if (fixedX || fixedY || fixedZ)
+          {
+        	  pos = Vector3f(x, y, z);
+        	  vel = Vector3f(velX, velY, velZ);
+        	  *iter = pos;
+        	  *(iter + 1) = vel;
+          }
+      }
+
+      system->setState(state);
+  }
 
   // Draw the current particle positions
   void drawSystem()
