@@ -30,6 +30,11 @@ public:
 	// Made this public for testing purposes only
 	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
 
+    float getGridSize()
+    {
+        return gridSideLength;
+    };
+
 private:
 	// Instance variables
 	float sideLength;

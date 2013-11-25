@@ -17,8 +17,7 @@
 using namespace std;
 
 // Globals here.
-int clothHeight = 8;
-int clothWidth = 8;
+int numParticles = 100;
 
 // For movement of the cloth along the z axis
 float clothSystemZBoundaryPos = 6.0;
@@ -46,7 +45,7 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    system = new SPHFluidSystem(200);
+    system = new SPHFluidSystem(17);
 
 	timeStepper = new RK4();
 
@@ -61,55 +60,74 @@ namespace
       {
           timeStepper->takeStep(system,stepSize);
       }
+
+      // Collision detection
+
+      vector<Vector3f> state = system->getState();
+      for (int i = 0; i < numParticles; ++i)
+      {
+          Vector3f pos = state[2 * i];
+          Vector3f vel = state[2 * i + 1];
+
+
+      }
   }
+
 
   // Draw the current particle positions
   void drawSystem()
   {
     // Base material colors (they don't change)
     GLfloat particleColor[] = {0.4f, 0.7f, 1.0f, 1.0f};
-    GLfloat floorColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
+    GLfloat tankColor[] = {0.0f, 0.0f, 1.0f, 0.3f};
     
-    glTranslatef(-5.0, -2.0, 0.0);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor);
-    
+    glTranslatef(-1.0f, -1.0f, 0.0f); // Origin at (-1.0, -1.0, 0.0). Everything drawn relative to this point.
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor);    
+
     system->draw();
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, floorColor);
 
-    // Draw the water tank
-    /*
-    glBegin(GL_QUADS);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 4.0f, 0.0f);
-    glVertex3f(0.0f, 4.0f, 4.0f);
-    glVertex3f(0.0f, 0.0f, 4.0f);
-    glEnd();
-    */
+    glEnable(GL_BLEND); //Enable alpha blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, tankColor);
 
-    glBegin(GL_QUADS);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(9.0f, 0.0f, 0.0f);
-    glVertex3f(9.0f, 4.0f, 0.0f);
-    glVertex3f(0.0f, 4.0f, 0.0f);
-    glEnd();
+    // Draw the tank
 
-    /*
-    glBegin(GL_QUADS);
-    glVertex3f(4.0f, 0.0f, 0.0f);
-    glVertex3f(4.0f, 4.0f, 0.0f);
-    glVertex3f(4.0f, 4.0f, 4.0f);
-    glVertex3f(4.0f, 0.0f, 4.0f);
-    glEnd();
-    */
-    /*
-    glBegin(GL_QUADS);
-    glVertex3f(0.0f, 0.0f, 2.0f);
-    glVertex3f(2.0f, 0.0f, 2.0f);
-    glVertex3f(2.0f, 2.0f, 2.0f);
-    glVertex3f(0.0f, 2.0f, 2.0f);
-    glEnd();
-    */
-  }
+    // Back
+    glPushMatrix();
+    glTranslatef(1.0f, 1.0f, 0.0f);
+    glScaled(2.0f, 2.0f, 0.1f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Front
+    glPushMatrix();
+    glTranslatef(1.0f, 1.0f, 2.0f);
+    glScaled(2.0f, 2.0f, 0.1f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Bottom
+    glPushMatrix();
+    glTranslatef(1.0f, 0.0f, 1.0f);
+    glScaled(2.0f, 0.1f, 2.0f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Left
+    glPushMatrix();
+    glTranslatef(0.0f, 1.0f, 1.0f);
+    glScaled(0.1f, 2.0f, 2.0f);
+    glutSolidCube(1);
+    glPopMatrix();
+
+    // Right
+    glPushMatrix();
+    glTranslatef(2.0f, 1.0f, 1.0f);
+    glScaled(0.1f, 2.0f, 2.0f);
+    glutSolidCube(1);
+    glPopMatrix();
+}
         
 
     //-------------------------------------------------------------------
@@ -365,9 +383,9 @@ int main( int argc, char* argv[] )
 
     // Initial parameters for window position and size
     glutInitWindowPosition( 60, 60 );
-    glutInitWindowSize( 500, 600 );
+    glutInitWindowSize( 1000, 1000 );
     
-    camera.SetDimensions( 500, 600 );
+    camera.SetDimensions( 1000, 1000 );
 
     camera.SetDistance( 10 );
     camera.SetCenter(Vector3f::ZERO);
