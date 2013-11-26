@@ -35,11 +35,11 @@ public:
                                      	Vector3f gradKernel);
 
     static Vector3f getViscosityForce(float mi,
-    									 float viscosityConstant,
-    									 float densityj,
-    									 float viscosityKernelLaplacian,
-    									 Vector3f vj,
-    									 Vector3f vi);
+                                      float viscosityConstant,
+                                      float densityj,
+                                      float viscosityKernelLaplacian,
+                                      Vector3f vj,
+                                      Vector3f vi);
   };
 
 #endif /* FORCEUTILITIES_H_ */

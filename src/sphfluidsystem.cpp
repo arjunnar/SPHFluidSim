@@ -12,7 +12,7 @@ SPHFluidSystem::SPHFluidSystem()
 SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
     initConstants();
-    buildTwoParticleSystemNeighbors();
+    testOneInitializeSystem();
 
 	Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, 0.5, 0.9, 0.5);
@@ -20,13 +20,12 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 
 void SPHFluidSystem::initConstants()
 {
-    PARTICLE_MASS = 0.00065;
-    GRAVITY_CONSTANT = 0.5;
-	REST_DENSITY = 0.0;
-    GAS_CONSTANT = 0.0060;
-	GRID_DIMENSION = 0.015;
+    PARTICLE_MASS = 0.02;
+    GRAVITY_CONSTANT = 6.5;
+    REST_DENSITY = 1000.0;
+    GAS_CONSTANT = 1.0;
 	H_CONSTANT = 0.02289;
-	VISCOSITY_CONSTANT = 0.0072;
+    VISCOSITY_CONSTANT = 6.0;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
@@ -36,6 +35,32 @@ SPHFluidSystem::~SPHFluidSystem()
 
 vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 {
+    for (vector<Vector3f>::iterator iter = state.begin(); iter != state.end(); iter += 2)
+    {
+        Vector3f pos = *iter;
+        Vector3f vel = *(iter + 1);
+
+        float x = pos.x();
+        float y = pos.y();
+        float z = pos.z();
+
+        float velX = vel.x();
+        float velY = vel.y();
+        float velZ = vel.z();
+
+        bool fixedX = fixCoord(x, velX, 0.5);
+        bool fixedY = fixCoord(y, velY, 0.9);
+        bool fixedZ = fixCoord(z, velZ, 0.5);
+
+        if (fixedX || fixedY || fixedZ)
+        {
+            pos = Vector3f(x, y, z);
+            vel = Vector3f(velX, velY, velZ);
+            *iter = pos;
+            *(iter + 1) = vel;
+        }
+    }
+
     vector<Vector3f> particlePositionsInState = PhysicsUtilities::getParticlePositions(state);
     particleGrid.initializeGrid(particlePositionsInState);
 
@@ -118,15 +143,15 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         // NOT SURE IF THIS IS NEEDED, SEEMS HACKY
         if (densityAtParticleLoc < densityEpsilon)
         {
-            accelPressure = Vector3f::ZERO;
-            accelViscosity = Vector3f::ZERO;
+            //accelPressure = Vector3f::ZERO;
+            // accelViscosity = Vector3f::ZERO;
         }
 
-        else
-        {
+        //else
+        //{
 			accelPressure = totalPressureForce / densityAtParticleLoc;
 			accelViscosity = totalViscosityForce / densityAtParticleLoc;
-        }
+        //}
 
         // CALCULATE ACCELERATION FROM SURFACE TENSION
         Vector3f accelSurfaceTension = Vector3f::ZERO;
@@ -148,15 +173,23 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
 void SPHFluidSystem::draw()
 {
+    int numNanPositions = 0;
     for (int i = 0; i < m_numParticles; i++)
     {
         // Draw the particles
         Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
+        if (isNan(posParticle.x())|| isNan(posParticle.y()) || isNan(posParticle.z()))
+        {
+            cout << "Encountered NAN position: " << "( " << posParticle.x() << " , " << posParticle.y() << " ," << posParticle.z() << " )" << endl;
+            ++numNanPositions;
+        }
         glPushMatrix();
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
         glutSolidSphere(0.0150f,10.0f,10.0f);
         glPopMatrix();
     }
+
+    cout << "Num nans: " << numNanPositions << endl;
 }
 
 void SPHFluidSystem::reinitializeSystem()
@@ -193,6 +226,11 @@ float SPHFluidSystem::calcDensity(int particleIndex, vector<int> &neighborIndexe
     return density;
 }
 
+bool SPHFluidSystem::isNan(float val)
+{
+    return val != val;
+}
+
 // Different system initializtions
 void SPHFluidSystem::buildTwoParticleSystemNotNeighbors()
 {
@@ -218,15 +256,17 @@ void SPHFluidSystem::buildTwoParticleSystemNeighbors()
 
 void  SPHFluidSystem::testOneInitializeSystem()
 {
-    for (int k = 0; k < 1; k++)
+    for (int k = 0; k < 5; k++)
 	{
 		for (int i = 0; i < 20; i++ )
 		{
 			for (int j = 0; j < 40; j++) {
-	            Vector3f point(0.14 + .015 * i, 0.24 + j * .015, 0.2 +  k * .015);
+                Vector3f point(0.14 + .005 * i, 0.24 + j * .005, 0.2 +  k * .005);
 	            m_vVecState.push_back(point);
 	            m_vVecState.push_back(Vector3f::ZERO);
 			}
 		}
 	}
+
+    m_numParticles = 4000;
 }

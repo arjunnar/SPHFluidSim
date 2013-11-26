@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 2;
+int numParticles = 800;
 float boxSizeX = 0.5;
 float boxSizeY = 0.9;
 float boxSizeZ = 0.5;
@@ -44,29 +44,29 @@ namespace
 
     system = new SPHFluidSystem(numParticles);
 
-	timeStepper = new RK4();
+    timeStepper = new ForwardEuler();
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = 0.02;
+    stepSize = 0.003;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
   {
-	  float collisionEpsilon = 0.01;
+      float collisionEpsilon = 0.02;
 	  bool fixed = false;
 
-	  if (coord < 0.0f + collisionEpsilon)
+      if (coord < 0.0f + collisionEpsilon)
 	  {
 		  coord = collisionEpsilon;
-		  vel = 0.0;
+          vel = -0.5* vel;
 		  fixed = true;
 	  }
 
-	  else if (coord > boxSize - collisionEpsilon)
+      else if (coord > boxSize - collisionEpsilon)
 	  {
-		  coord = boxSize - collisionEpsilon;
-		  vel = 0.0;
+          coord = boxSize - collisionEpsilon;
+          vel = -0.5 * vel;
 		  fixed = true;
 	  }
 
