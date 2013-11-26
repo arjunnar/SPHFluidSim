@@ -177,7 +177,7 @@ void SPHFluidSystem::draw()
         Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
         glPushMatrix();
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-        glutSolidSphere(0.0250f,10.0f,10.0f);
+        glutSolidSphere(0.00500f,10.0f,10.0f);
         glPopMatrix();
     }
 }
