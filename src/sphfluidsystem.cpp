@@ -11,8 +11,8 @@ SPHFluidSystem::SPHFluidSystem()
 
 SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
-	initConstants();
-    buildTwoParticleSystemNotNeighbors();
+    initConstants();
+    buildTwoParticleSystemNeighbors();
 
 	Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, 0.5, 0.9, 0.5);
@@ -20,12 +20,12 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 
 void SPHFluidSystem::initConstants()
 {
-	PARTICLE_MASS = 1.0;
-	GRAVITY_CONSTANT = 0.5;
+    PARTICLE_MASS = 0.00065;
+    GRAVITY_CONSTANT = 0.5;
 	REST_DENSITY = 0.0;
-	GAS_CONSTANT = 0.070;
+    GAS_CONSTANT = 0.0060;
 	GRID_DIMENSION = 0.015;
-	H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
+	H_CONSTANT = 0.02289;
 	VISCOSITY_CONSTANT = 0.0072;
 }
 
@@ -117,16 +117,16 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
         // NOT SURE IF THIS IS NEEDED, SEEMS HACKY
         if (densityAtParticleLoc < densityEpsilon)
-	    {
-			accelPressure = Vector3f::ZERO;
-			accelViscosity = Vector3f::ZERO;
-		}
+        {
+            accelPressure = Vector3f::ZERO;
+            accelViscosity = Vector3f::ZERO;
+        }
 
-		else
-		{
+        else
+        {
 			accelPressure = totalPressureForce / densityAtParticleLoc;
 			accelViscosity = totalViscosityForce / densityAtParticleLoc;
-		}
+        }
 
         // CALCULATE ACCELERATION FROM SURFACE TENSION
         Vector3f accelSurfaceTension = Vector3f::ZERO;
@@ -205,9 +205,20 @@ void SPHFluidSystem::buildTwoParticleSystemNotNeighbors()
     m_vVecState.push_back(Vector3f::ZERO);
 }
 
+void SPHFluidSystem::buildTwoParticleSystemNeighbors()
+{
+    Vector3f pos1(0.3, 0.5, 0.1);
+    Vector3f pos2(0.305, 0.5, 0.1);
+
+    m_vVecState.push_back(pos1);
+    m_vVecState.push_back(Vector3f::ZERO);
+    m_vVecState.push_back(pos2);
+    m_vVecState.push_back(Vector3f::ZERO);
+}
+
 void  SPHFluidSystem::testOneInitializeSystem()
 {
-	for (int k = 0; k < 4; k++)
+    for (int k = 0; k < 1; k++)
 	{
 		for (int i = 0; i < 20; i++ )
 		{

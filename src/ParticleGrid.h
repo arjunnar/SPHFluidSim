@@ -30,10 +30,20 @@ public:
 	// Made this public for testing purposes only
 	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
 
-    float getGridSizeX()
+    float getSideLengthX()
     {
         return sideLengthX;
-    };
+    }
+
+    float getSideLengthY()
+    {
+        return sideLengthY;
+    }
+
+    float getSideLengthZ()
+    {
+        return sideLengthZ;
+    }
 
 private:
 	// Instance variables
@@ -50,7 +60,7 @@ private:
 	float gridSideLengthY;
 	float gridSideLengthZ;
 
-    map<int, Tuple::tuple<int, 3>> indexesToGridCoords;
+    map<int, Tuple::tuple<int, 3>> mapIndexesToGridCoords;
 
 	// Helper functions
 	inline bool isCoordValid(int val);

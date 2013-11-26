@@ -42,8 +42,9 @@ class SPHFluidSystem : public ParticleSystem
         void initConstants();
 
         // Different system initializations
-        void  testOneInitializeSystem();
-        void  buildTwoParticleSystemNotNeighbors();
+        void testOneInitializeSystem();
+        void buildTwoParticleSystemNeighbors();
+        void buildTwoParticleSystemNotNeighbors();
 
 };
 

@@ -13,7 +13,6 @@ ParticleGrid::ParticleGrid()
     ParticleGrid(Vector3f::ZERO, 0.6, 0.9, 0.6);
 }
 
-
 ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
     grid = std::vector<std::list<int>>(100 * 100 * 100);
@@ -22,13 +21,15 @@ ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float size
         grid[i] = std::list<int>();
     }
 
-    indexesToGridCoords = map<int, Tuple::tuple<int, 3>>();
+    mapIndexesToGridCoords = map<int, Tuple::tuple<int, 3>>();
 
-	sideLengthX = sizeX;
-	sideLengthY = sizeY;
-	sideLengthZ = sizeZ;
-	this->origin = origin;
-	topRightCorner = origin + Vector3f(sideLengthX, sideLengthY, sideLengthZ);
+    sideLengthX = sizeX;
+    sideLengthY = sizeY;
+    sideLengthZ = sizeZ;
+
+    topRightCorner = origin + Vector3f(sideLengthX, sideLengthY, sideLengthZ);
+
+    // Dimensions of a single cell in the grid
     gridSideLengthX = sideLengthX / NUM_CELLS_PER_DIMEN;
     gridSideLengthY = sideLengthY / NUM_CELLS_PER_DIMEN;
     gridSideLengthZ = sideLengthZ / NUM_CELLS_PER_DIMEN;
@@ -40,21 +41,22 @@ ParticleGrid::~ParticleGrid()
 
 void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 {
-    for (int pIndex = 0; pIndex < particleLocations.size(); ++pIndex)
+    for (int particleIndex = 0; particleIndex < particleLocations.size(); ++particleIndex)
 	{
-        Vector3f loc = particleLocations[pIndex];
+        Vector3f particleLoc = particleLocations[particleIndex];
 
-        Tuple::tuple<int, 3> gridCoords = getGridCoordinates(loc);
-		int i = gridCoords[0];
-		int j = gridCoords[1];
-		int k = gridCoords[2];
+        Tuple::tuple<int, 3> gridCoords = getGridCoordinates(particleLoc);
+        int newi = gridCoords[0];
+        int newj = gridCoords[1];
+        int newk = gridCoords[2];
 
-		if ( !(isCoordValid(i) && isCoordValid(j) && isCoordValid(k)) )
+        if ( !(isCoordValid(newi) && isCoordValid(newk) && isCoordValid(newj)) )
 		{
+            // Particle is outside of the grid
 			continue;
 		}
 
-        bool oldCoordsInMap = indexesToGridCoords.find(pIndex) != indexesToGridCoords.end();
+        bool oldCoordsInMap = mapIndexesToGridCoords.find(particleIndex) != mapIndexesToGridCoords.end();
 
         int oldi;
         int oldj;
@@ -62,14 +64,15 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 
         if (oldCoordsInMap)
         {
-            Tuple::tuple<int, 3> oldGridCoords = indexesToGridCoords[pIndex];
+            Tuple::tuple<int, 3> oldGridCoords = mapIndexesToGridCoords[particleIndex];
             oldi = oldGridCoords[0];
             oldj = oldGridCoords[1];
             oldk = oldGridCoords[2];
         }
 
-        if (oldCoordsInMap && i == oldi && j == oldj && k == oldk)
+        if (oldCoordsInMap && newi == oldi && newj == oldj && newk == oldk)
         {
+            // Old grid coordinates and new grid coordinates are the same. No need to update the grid.
             continue;
         }
 
@@ -77,23 +80,23 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
         {
             if (!oldCoordsInMap)
             {
-                grid[getGridIndex(i, j, k)].push_back(pIndex);
+                // This is the first time we are computing grid coordinates for the particle
+                grid[getGridIndex(newi, newj, newk)].push_back(particleIndex);
             }
 
             else
             {
-                grid[getGridIndex(oldi, oldj, oldk)].remove(pIndex);
-                grid[getGridIndex(i, j, k)].push_back(pIndex);
-                indexesToGridCoords.erase(pIndex);
+                // Remove the particle from the old cell and add it to the new cell
+                grid[getGridIndex(oldi, oldj, oldk)].remove(particleIndex);
+                grid[getGridIndex(newi, newj, newk)].push_back(particleIndex);
+                mapIndexesToGridCoords.erase(particleIndex);
             }
 
-            indexesToGridCoords.insert(std::pair<int, Tuple::tuple<int, 3>>(pIndex, Tuple::tuple<int, 3>(i, j, k)));
+            // Save the new grid coordinates for the particle in our map
+            mapIndexesToGridCoords.insert(std::pair<int, Tuple::tuple<int, 3>>(particleIndex, Tuple::tuple<int, 3>(newi, newj, newk)));
         }
 	}
 }
-
-
-
 
 Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
 {
@@ -114,7 +117,7 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 
 	for (int iIncr = -1; iIncr <= 1; ++iIncr)
 	{
-        int iNeighbor = iParticle + iIncr;https://github.com/
+        int iNeighbor = iParticle + iIncr;
 		if (!isCoordValid(iNeighbor)) { continue; }
 
 		for (int jIncr = -1; jIncr <= 1; ++jIncr)
@@ -126,7 +129,6 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 			{
 				int kNeighbor = kParticle + kIncr;
 				bool inSameCell = iNeighbor == iParticle && jNeighbor == jParticle && kNeighbor == kParticle;
-
 				if (!isCoordValid(kNeighbor)) { continue; }
 
                 std::list<int> neighborsInCell = getGridListAt(iNeighbor, jNeighbor, kNeighbor);
@@ -146,24 +148,6 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 }
 
 // Helper functions
-/*
-void ParticleGrid::baseInitGrid()
-{
-    for (int i = 0; i < numCellsPerDimension; ++i)
-    {
-        grid.push_back(std::vector<std::vector<std::vector<int> > >());
-        for (int j = 0; j < numCellsPerDimension; ++j)
-        {
-            grid[i].push_back(std::vector<std::vector<int> >());
-            for (int k = 0; k < numCellsPerDimension; ++k)
-            {
-                grid[i][j].push_back(std::vector<int>());
-            }
-        }
-    }
-}
-*/
-
 inline bool ParticleGrid::isCoordValid(int val)
 {
     return 0 <= val && val < NUM_CELLS_PER_DIMEN;

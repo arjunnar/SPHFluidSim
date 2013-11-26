@@ -48,7 +48,7 @@ namespace
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = 0.1;
+    stepSize = 0.02;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
@@ -80,8 +80,6 @@ namespace
       {
           timeStepper->takeStep(system,stepSize);
       }
-
-      // Collision detection
 
       vector<Vector3f> state = system->getState();
       for (vector<Vector3f>::iterator iter = state.begin(); iter != state.end(); iter += 2)
