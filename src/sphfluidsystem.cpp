@@ -31,8 +31,8 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 
     for (int i = 0; i < 10; ++i)
     {
-    	for (int k = 0; k < 10; ++k) {
-            Vector3f point(1.0 + i * .01, 1.0, 1.0 +  k * .01);
+    	for (int k = 0; k < 30; ++k) {
+            Vector3f point(1.0  + i * .01, 1.0, 1.0 +  k * .015);
             m_vVecState.push_back(point);
             m_vVecState.push_back(Vector3f::ZERO);
     	}
@@ -119,8 +119,11 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         // CALCULATE SURFACE TENSION FORCE
         Vector3f surfaceTensionForce = Vector3f::ZERO;
 
+        // CALCULATE GRAVITATIONAL FORCE
+        Vector3f gravity = PhysicsUtilities::getGravityForce(PARTICLE_MASS, GRAVITY_CONSTANT);
+
         // Add the results to the derivative
-        Vector3f totalForce = totalPressureForce + totalViscosityForce + surfaceTensionForce;
+        Vector3f totalForce = totalPressureForce + totalViscosityForce + surfaceTensionForce + gravity;
         //cout << "Total Force on particle " << particleIndex << " : " << " < " << totalForce.x() << " , " << totalForce.y()
           //   << " , " << totalForce.z() << " > " << endl;
 
