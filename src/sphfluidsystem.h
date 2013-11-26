@@ -25,6 +25,8 @@ class SPHFluidSystem : public ParticleSystem
         ParticleGrid particleGrid;
         map<int, float> densityCache;
         float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
+        void  testOneInitializeSystem();
+
         void initConstants();
         float PARTICLE_MASS;
         float GRAVITY_CONSTANT;
@@ -33,6 +35,8 @@ class SPHFluidSystem : public ParticleSystem
         float GRID_DIMENSION;
         float H_CONSTANT;
         float VISCOSITY_CONSTANT;
+
+
 };
 
 #endif // SPHFLUIDSYSTEM_H
