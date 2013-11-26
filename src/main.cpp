@@ -52,7 +52,7 @@ namespace
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = 0.02;
+    stepSize = 0.8;
   }
 
   bool fixCoord(float &coord, float &vel)

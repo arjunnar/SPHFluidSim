@@ -1,0 +1,3 @@
+Optimization 
+
+Optimize out neighbors if density is near zero
