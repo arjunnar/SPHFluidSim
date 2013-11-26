@@ -22,7 +22,7 @@ class ParticleGrid
 
 public:
 	ParticleGrid();
-    ParticleGrid(Vector3f origin, float size);
+    ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ);
 	virtual ~ParticleGrid();
 	std::vector<int> getNeighborParticleIndexes(int ParticleIndex, Vector3f &particleLoc);
 	void initializeGrid(std::vector<Vector3f> &particleLocations);
@@ -30,19 +30,26 @@ public:
 	// Made this public for testing purposes only
 	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
 
-    float getGridSize()
+    float getGridSizeX()
     {
-        return gridSideLength;
+        return sideLengthX;
     };
 
 private:
 	// Instance variables
-	float sideLength;
 	Vector3f origin;
 	Vector3f topRightCorner;
     static const int NUM_CELLS_PER_DIMEN = 100;
     std::vector<std::list<int>> grid;
-	float gridSideLength;
+
+    float sideLengthX;
+	float sideLengthY;
+	float sideLengthZ;
+
+	float gridSideLengthX;
+	float gridSideLengthY;
+	float gridSideLengthZ;
+
     map<int, Tuple::tuple<int, 3>> indexesToGridCoords;
 
 	// Helper functions

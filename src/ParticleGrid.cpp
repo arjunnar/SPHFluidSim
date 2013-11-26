@@ -14,7 +14,7 @@ ParticleGrid::ParticleGrid()
 }
 
 
-ParticleGrid::ParticleGrid(Vector3f origin, float size)
+ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
     grid = std::vector<std::list<int>>(100 * 100 * 100);
     for (int i = 0; i < grid.size(); ++i)
@@ -24,10 +24,14 @@ ParticleGrid::ParticleGrid(Vector3f origin, float size)
 
     indexesToGridCoords = map<int, Tuple::tuple<int, 3>>();
 
-	sideLength = size;
+	sideLengthX = sizeX;
+	sideLengthY = sizeY;
+	sideLengthZ = sizeZ;
 	this->origin = origin;
-	topRightCorner = origin + Vector3f(size, size, size);
-    this->gridSideLength = (sideLength * 1.0) / NUM_CELLS_PER_DIMEN;
+	topRightCorner = origin + Vector3f(sideLengthX, sideLengthY, sideLengthZ);
+    gridSideLengthX = sideLengthX / NUM_CELLS_PER_DIMEN;
+    gridSideLengthY = sideLengthY / NUM_CELLS_PER_DIMEN;
+    gridSideLengthZ = sideLengthZ / NUM_CELLS_PER_DIMEN;
 }
 
 ParticleGrid::~ParticleGrid()
@@ -93,9 +97,9 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
 
 Tuple::tuple<int, 3> ParticleGrid::getGridCoordinates(Vector3f &particleLoc)
 {
-    int i = (int) ( particleLoc.x() / gridSideLength );
-    int j = (int) ( particleLoc.y() / gridSideLength );
-    int k = (int) ( particleLoc.z() / gridSideLength );
+    int i = (int) ( particleLoc.x() / gridSideLengthX );
+    int j = (int) ( particleLoc.y() / gridSideLengthY );
+    int k = (int) ( particleLoc.z() / gridSideLengthZ );
 	return Tuple::tuple<int, 3>(i, j, k);
 }
 
