@@ -12,120 +12,8 @@ SPHFluidSystem::SPHFluidSystem()
 SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
 	initConstants();
-
-    Vector3f pointOne(1.5, 1.5, 1.5);
-    Vector3f pointTwo(1.51, 1.5, 1.5);
-    Vector3f pointThree(1.5, 1.5, 1.51);
-
-    m_vVecState.push_back(pointOne);
-    m_vVecState.push_back(Vector3f::ZERO);
-    m_vVecState.push_back(pointTwo);
-    m_vVecState.push_back(Vector3f::ZERO);
-    m_vVecState.push_back(pointThree);
-    m_vVecState.push_back(Vector3f::ZERO);
-
-
-    // Place a sheet of particles at x = 0.3
-    for (int i = 0; i < 20; ++i)
-    {
-    	for (int k = 0; k < 10; ++k) {
-            Vector3f point(0.3, 0.24 + i * .015, 0.35 +  k * .015);
-            m_vVecState.push_back(point);
-            m_vVecState.push_back(Vector3f::ZERO);
-    	}
-
-    }
-
-    for (int i = 0; i < 20; ++i)
-    {
-    	for (int k = 0; k < 10; ++k) {
-            Vector3f point(0.315  , 0.21 + i * .015, 0.35 +  k * .015);
-            m_vVecState.push_back(point);
-            m_vVecState.push_back(Vector3f::ZERO);
-    	}
-
-    }
-
-    for (int i = 0; i < 20; ++i)
-    {
-    	for (int k = 0; k < 10; ++k)
-    	{
-		   Vector3f point(0.33, 0.24 + i * .015, 0.35 +  k * .015);
-		   m_vVecState.push_back(point);
-		   m_vVecState.push_back(Vector3f::ZERO);
-    	}
-    }
-
-    for (int i = 0; i < 20; ++i)
-	{
-		for (int k = 0; k < 10; ++k)
-		{
-			Vector3f point(0.34  , 0.24 + i * .015, 0.35 +  k * .015);
-			m_vVecState.push_back(point);
-			m_vVecState.push_back(Vector3f::ZERO);
-		}
-
-	}
-
-    for (int i = 0; i < 20; ++i)
-	{
-		for (int k = 0; k < 10; ++k)
-		{
-			Vector3f point(0.35  , 0.24 + i * .015, 0.35 +  k * .015);
-			m_vVecState.push_back(point);
-			m_vVecState.push_back(Vector3f::ZERO);
-		}
-
-	}
-
-    /*
-    for (int i = 0; i < 20; ++i)
-	{
-		for (int k = 0; k < 10; ++k)
-		{
-			Vector3f point(0.365  , 0.24 + i * .015, 0.35 +  k * .015);
-			m_vVecState.push_back(point);
-			m_vVecState.push_back(Vector3f::ZERO);
-		}
-
-	}
-	*/
-
-    for (int i = 0; i < 20; ++i)
-	{
-		for (int k = 0; k < 10; ++k)
-		{
-			Vector3f point(0.365  , 0.24 + i * .010, 0.35 +  k * .015);
-			m_vVecState.push_back(point);
-			m_vVecState.push_back(Vector3f::ZERO);
-		}
-
-	}
-
-    for (int i = 0; i < 20; ++i)
-	{
-		for (int k = 0; k < 10; ++k)
-		{
-			Vector3f point(0.375  , 0.24 + i * .010, 0.35 +  k * .015);
-			m_vVecState.push_back(point);
-			m_vVecState.push_back(Vector3f::ZERO);
-		}
-
-	}
-    /*
-    for (int i = 0; i < 20; ++i)
-    	{
-    		for (int k = 0; k < 10; ++k)
-    		{
-    			Vector3f point(0.380  , 0.24 + i * .015, 0.35 +  k * .015);
-    			m_vVecState.push_back(point);
-    			m_vVecState.push_back(Vector3f::ZERO);
-    		}
-
-    	}
-    	*/
-
-    Vector3f origin = Vector3f::ZERO;
+	testOneInitializeSystem();
+	Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, 0.6);
     vector<Vector3f> particlePositions = PhysicsUtilities::getParticlePositions(m_vVecState);
     particleGrid.initializeGrid(particlePositions);
@@ -330,5 +218,20 @@ float SPHFluidSystem::calcDensity(int particleIndex, vector<int> &neighborIndexe
     }
 
     return density;
+}
+
+void  SPHFluidSystem::testOneInitializeSystem()
+{
+	for (int k = 0; k < 4; k++)
+	{
+		for (int i = 0; i < 20; i++ )
+		{
+			for (int j = 0; j < 40; j++) {
+	            Vector3f point(0.14 + .015 * i, 0.24 + j * .015, 0.35 +  k * .015);
+	            m_vVecState.push_back(point);
+	            m_vVecState.push_back(Vector3f::ZERO);
+			}
+		}
+	}
 }
 
