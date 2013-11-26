@@ -58,3 +58,9 @@ float KernelUtilities::polySixKernel(Vector3f r, float h)
 
 	return result;
 }
+
+float KernelUtilities::laplacianViscosityKernel(Vector3f r, float h)
+{
+	float constant = 45.0 / (M_PI * pow(h, 6.0));
+	return constant * (h - r.abs());
+}

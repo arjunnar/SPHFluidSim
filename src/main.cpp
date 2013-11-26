@@ -17,8 +17,8 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 403;
-float boxSize = 2.0;
+int numParticles = 1203;
+float boxSize = 0.6;
 
 // For movement of the cloth along the z axis
 float clothSystemZBoundaryPos = 6.0;
@@ -52,12 +52,12 @@ namespace
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = 0.02;
+    stepSize = 0.05;
   }
 
   bool fixCoord(float &coord, float &vel)
   {
-	  float collisionEpsilon = 0.1;
+	  float collisionEpsilon = 0.02;
 	  bool fixed = false;
 
 	  if (coord < 0.0f + collisionEpsilon)
@@ -69,7 +69,7 @@ namespace
 
 	  else if (coord > boxSize - collisionEpsilon)
 	  {
-		  coord = boxSize - 1.1 * collisionEpsilon;
+		  coord = boxSize - collisionEpsilon;
 		  vel = 0.0f;
 		  fixed = true;
 	  }
@@ -138,36 +138,36 @@ namespace
 
     // Back
     glPushMatrix();
-    glTranslatef(1.0f, 1.0f, 0.0f);
-    glScaled(2.0f, 2.0f, 0.1f);
+    glTranslatef(boxSize/2.0f, boxSize/2.0f, 0.0f);
+    glScaled(boxSize, boxSize, 0.05f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Front
     glPushMatrix();
-    glTranslatef(1.0f, 1.0f, 2.0f);
-    glScaled(2.0f, 2.0f, 0.1f);
+    glTranslatef(boxSize/2.0f, boxSize/2.0f, boxSize);
+    glScaled(boxSize, boxSize, 0.05f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Bottom
     glPushMatrix();
-    glTranslatef(1.0f, 0.0f, 1.0f);
-    glScaled(2.0f, 0.1f, 2.0f);
+    glTranslatef(boxSize/2.0f, 0.0f, boxSize/2.0f);
+    glScaled(boxSize, 0.05f, boxSize);
     glutSolidCube(1);
     glPopMatrix();
 
     // Left
     glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 1.0f);
-    glScaled(0.1f, 2.0f, 2.0f);
+    glTranslatef(0.0f, boxSize/2.0f, boxSize/2.0f);
+    glScaled(0.05f, boxSize, boxSize);
     glutSolidCube(1);
     glPopMatrix();
 
     // Right
     glPushMatrix();
-    glTranslatef(2.0f, 1.0f, 1.0f);
-    glScaled(0.1f, 2.0f, 2.0f);
+    glTranslatef(boxSize,  boxSize/2.0f,  boxSize/2.0f);
+    glScaled(0.1f, boxSize, boxSize);
     glutSolidCube(1);
     glPopMatrix();
 }
@@ -430,7 +430,7 @@ int main( int argc, char* argv[] )
     
     camera.SetDimensions( 1000, 1000 );
 
-    camera.SetDistance( 10 );
+    camera.SetDistance( 5 );
     camera.SetCenter(Vector3f::ZERO);
     
     glutCreateWindow("SPH Fluid Simulation");

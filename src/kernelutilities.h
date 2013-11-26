@@ -13,7 +13,7 @@ public:
     //static Vector3f gradPolySixKernel(Vector3f r, float h);
 
     //static float viscosityKernel(Vector3f r, float h);
-    //static Vector3f gsradViscosityKernel(Vector3f r, float h);
+    static float laplacianViscosityKernel(Vector3f r, float h);
 };
 
 #endif // SPHUTILITIES_H

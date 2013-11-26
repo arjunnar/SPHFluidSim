@@ -29,10 +29,17 @@ public:
 
     static float getPressureAtLocation(float desntiyAtLoc, float restDensity, float gasConstant);
     static Vector3f getPressureForce(float mi,
-                                     float pi,
-                                     float pj,
-                                     float densityj,
-                                     Vector3f gradKernel);
+                                     	float pi,
+                                     	float pj,
+                                     	float densityj,
+                                     	Vector3f gradKernel);
+
+    static Vector3f getViscosityForce(float mi,
+    									 float viscosityConstant,
+    									 float densityj,
+    									 float viscosityKernelLaplacian,
+    									 Vector3f vj,
+    									 Vector3f vi);
   };
 
 #endif /* FORCEUTILITIES_H_ */
