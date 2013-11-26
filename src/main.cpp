@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 403;
+int numParticles = 903;
 float boxSize = 2.0;
 
 // For movement of the cloth along the z axis

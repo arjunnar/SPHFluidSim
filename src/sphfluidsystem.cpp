@@ -29,9 +29,9 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
     m_vVecState.push_back(pointThree);
     m_vVecState.push_back(Vector3f::ZERO);
 
-    for (int i = 0; i < 20; ++i)
+    for (int i = 0; i < 30; ++i)
     {
-    	for (int k = 0; k < 20; ++k) {
+    	for (int k = 0; k < 30; ++k) {
             Vector3f point(1.0  + i * .015, 1.0, 1.0 +  k * .015);
             m_vVecState.push_back(point);
             m_vVecState.push_back(Vector3f::ZERO);
