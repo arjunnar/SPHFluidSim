@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 1600;
+int numParticles = 2;
 float boxSizeX = 0.5;
 float boxSizeY = 0.9;
 float boxSizeZ = 0.5;
@@ -426,7 +426,7 @@ int main( int argc, char* argv[] )
     
     camera.SetDimensions( 1000, 1000 );
 
-    camera.SetDistance( 1.0 );
+    camera.SetDistance( 7.0 );
     camera.SetCenter(Vector3f::ZERO);
     
     glutCreateWindow("SPH Fluid Simulation");

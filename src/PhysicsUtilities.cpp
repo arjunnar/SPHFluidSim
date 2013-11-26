@@ -30,13 +30,14 @@ Vector3f PhysicsUtilities::getDragForce(float dragConstant, Vector3f velocityVec
 }
 
 Vector3f PhysicsUtilities::getPressureForce(float mj,
-                                            	 float pi,
-                                            	 float pj,
-                                            	 float densityj,
-                                            	 Vector3f gradKernel)
+                                            float pi,
+                                            float pj,
+                                            float densityj,
+                                            Vector3f gradSpikyKernel)
 {
+    // Eq(10)
     float avgPressure = (pi + pj) / 2.0;
-    return (-1.0 * mj * avgPressure / densityj) * gradKernel;
+    return (-1.0 * mj * avgPressure / densityj) * gradSpikyKernel;
 }
 
 Vector3f PhysicsUtilities::getPositionOfParticle(vector<Vector3f> &state, int particleNum)
@@ -76,15 +77,16 @@ float PhysicsUtilities::getPressureAtLocation(float densityAtLoc, float restDens
 }
 
 Vector3f PhysicsUtilities::getViscosityForce(float mj,
-   									 	 	 	  float viscosityConstant,
-   									 	 	 	  float densityj,
-   									 	 	 	  float viscosityKernelLaplacian,
-   									 	 	 	  Vector3f vj,
-   									 	 	 	  Vector3f vi)
-{
+                                             float viscosityConstant,
+                                             float densityj,
+                                             float viscosityKernelLaplacian,
+                                             Vector3f vj,
+                                             Vector3f vi)
+    {
+    // Eq(14)
 	float constant = (viscosityConstant * mj) / densityj;
 	Vector3f velocityDiff = vj - vi;
-	return constant * velocityDiff * viscosityKernelLaplacian;
+    return constant * viscosityKernelLaplacian * velocityDiff;
 }
 
 

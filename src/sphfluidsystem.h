@@ -17,17 +17,18 @@ class SPHFluidSystem : public ParticleSystem
         SPHFluidSystem();
         SPHFluidSystem(int numParticles);
         virtual ~SPHFluidSystem();
+
+        // Functions inherited from ParticleSystem
         vector<Vector3f> evalF(vector<Vector3f> state);
         void draw();
         void reinitializeSystem();
-        void checkCollisions();
+
    private:
+        // Instance variables
         ParticleGrid particleGrid;
         map<int, float> densityCache;
-        float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
-        void  testOneInitializeSystem();
 
-        void initConstants();
+        // Physics constants
         float PARTICLE_MASS;
         float GRAVITY_CONSTANT;
         float REST_DENSITY;
@@ -36,6 +37,13 @@ class SPHFluidSystem : public ParticleSystem
         float H_CONSTANT;
         float VISCOSITY_CONSTANT;
 
+        // Helper functions
+        float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
+        void initConstants();
+
+        // Different system initializations
+        void  testOneInitializeSystem();
+        void  buildTwoParticleSystemNotNeighbors();
 
 };
 
