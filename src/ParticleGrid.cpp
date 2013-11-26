@@ -10,7 +10,7 @@
 
 ParticleGrid::ParticleGrid()
 {
-    ParticleGrid(Vector3f::ZERO, 5);
+    ParticleGrid(Vector3f::ZERO, 0.6, 0.9, 0.6);
 }
 
 

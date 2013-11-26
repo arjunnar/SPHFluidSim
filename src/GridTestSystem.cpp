@@ -13,7 +13,7 @@ GridTestSystem::GridTestSystem(int numParticles) : ParticleSystem(numParticles)
 {
 	Vector3f origin(0,0,0);
     float gridSize = 4.0;
-    particleGrid = ParticleGrid(origin, gridSize);
+    particleGrid = ParticleGrid(origin, gridSize, gridSize, gridSize);
 
 	// World space to grid coords test 1
 	//Vector3f pointOne(.2, .2, .2);

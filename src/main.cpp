@@ -17,14 +17,10 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 1200;
-float boxSize = 0.6;
-
-// For movement of the cloth along the z axis
-float clothSystemZBoundaryPos = 6.0;
-float clothSystemZBoundaryNeg = -6.0;
-int pendulumSize = 5;
-bool clothMoving;
+int numParticles = 1600;
+float boxSizeX = 0.5;
+float boxSizeY = 0.9;
+float boxSizeZ = 0.5;
 
 namespace
 {
@@ -52,25 +48,25 @@ namespace
 
 	integratorType = IntegratorType::RUNGE_KUTTA;
 
-    stepSize = 0.05;
+    stepSize = 0.1;
   }
 
-  bool fixCoord(float &coord, float &vel)
+  bool fixCoord(float &coord, float &vel, float boxSize)
   {
-	  float collisionEpsilon = 0.02;
+	  float collisionEpsilon = 0.01;
 	  bool fixed = false;
 
 	  if (coord < 0.0f + collisionEpsilon)
 	  {
 		  coord = collisionEpsilon;
-		  vel = 0.0f;
+		  vel = 0.0;
 		  fixed = true;
 	  }
 
 	  else if (coord > boxSize - collisionEpsilon)
 	  {
 		  coord = boxSize - collisionEpsilon;
-		  vel = 0.0f;
+		  vel = 0.0;
 		  fixed = true;
 	  }
 
@@ -101,9 +97,9 @@ namespace
           float velY = vel.y();
           float velZ = vel.z();
 
-          bool fixedX = fixCoord(x, velX);
-          bool fixedY = fixCoord(y, velY);
-          bool fixedZ = fixCoord(z, velZ);
+          bool fixedX = fixCoord(x, velX, boxSizeX);
+          bool fixedY = fixCoord(y, velY, boxSizeY);
+          bool fixedZ = fixCoord(z, velZ, boxSizeZ);
 
           if (fixedX || fixedY || fixedZ)
           {
@@ -138,36 +134,36 @@ namespace
 
     // Back
     glPushMatrix();
-    glTranslatef(boxSize/2.0f, boxSize/2.0f, 0.0f);
-    glScaled(boxSize, boxSize, 0.05f);
+    glTranslatef(boxSizeX/2.0f, boxSizeY/2.0f, 0.0f);
+    glScaled(boxSizeX, boxSizeY, 0.05f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Front
     glPushMatrix();
-    glTranslatef(boxSize/2.0f, boxSize/2.0f, boxSize);
-    glScaled(boxSize, boxSize, 0.05f);
+    glTranslatef(boxSizeX/2.0f, boxSizeY/2.0f, boxSizeZ);
+    glScaled(boxSizeX, boxSizeY, 0.02f);
     glutSolidCube(1);
     glPopMatrix();
 
     // Bottom
     glPushMatrix();
-    glTranslatef(boxSize/2.0f, 0.0f, boxSize/2.0f);
-    glScaled(boxSize, 0.05f, boxSize);
+    glTranslatef(boxSizeX/2.0f, 0.0f, boxSizeZ/2.0f);
+    glScaled(boxSizeX, 0.02f, boxSizeZ);
     glutSolidCube(1);
     glPopMatrix();
 
     // Left
     glPushMatrix();
-    glTranslatef(0.0f, boxSize/2.0f, boxSize/2.0f);
-    glScaled(0.05f, boxSize, boxSize);
+    glTranslatef(0.0f, boxSizeY/2.0f, boxSizeZ/2.0f);
+    glScaled(0.02f, boxSizeY, boxSizeZ);
     glutSolidCube(1);
     glPopMatrix();
 
     // Right
     glPushMatrix();
-    glTranslatef(boxSize,  boxSize/2.0f,  boxSize/2.0f);
-    glScaled(0.1f, boxSize, boxSize);
+    glTranslatef(boxSizeX,  boxSizeY/2.0f,  boxSizeZ/2.0f);
+    glScaled(0.02f, boxSizeY, boxSizeZ);
     glutSolidCube(1);
     glPopMatrix();
 }
@@ -430,7 +426,7 @@ int main( int argc, char* argv[] )
     
     camera.SetDimensions( 1000, 1000 );
 
-    camera.SetDistance( 5 );
+    camera.SetDistance( 1.0 );
     camera.SetCenter(Vector3f::ZERO);
     
     glutCreateWindow("SPH Fluid Simulation");

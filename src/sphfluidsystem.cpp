@@ -14,20 +14,20 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 	initConstants();
 	testOneInitializeSystem();
 	Vector3f origin = Vector3f::ZERO;
-    particleGrid = ParticleGrid(origin, 0.6);
+    particleGrid = ParticleGrid(origin, 0.5, 0.9, 0.5);
     vector<Vector3f> particlePositions = PhysicsUtilities::getParticlePositions(m_vVecState);
     particleGrid.initializeGrid(particlePositions);
 }
 
 void SPHFluidSystem::initConstants()
 {
-	PARTICLE_MASS = 0.00065;
-	GRAVITY_CONSTANT = 0.04800;
-	REST_DENSITY = 0.05;
-	GAS_CONSTANT = 0.015;
+	PARTICLE_MASS = 1.0;
+	GRAVITY_CONSTANT = 0.5;
+	REST_DENSITY = 0.0;
+	GAS_CONSTANT = 0.070;
 	GRID_DIMENSION = 0.015;
 	H_CONSTANT = GRID_DIMENSION * 2 * sqrt(3);
-	VISCOSITY_CONSTANT = 0.000060;
+	VISCOSITY_CONSTANT = 0.0072;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
@@ -227,7 +227,7 @@ void  SPHFluidSystem::testOneInitializeSystem()
 		for (int i = 0; i < 20; i++ )
 		{
 			for (int j = 0; j < 40; j++) {
-	            Vector3f point(0.14 + .015 * i, 0.24 + j * .015, 0.35 +  k * .015);
+	            Vector3f point(0.14 + .015 * i, 0.24 + j * .015, 0.2 +  k * .015);
 	            m_vVecState.push_back(point);
 	            m_vVecState.push_back(Vector3f::ZERO);
 			}
