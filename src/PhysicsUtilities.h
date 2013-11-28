@@ -36,11 +36,6 @@ public:
                                       float viscosityKernelLaplacian,
                                       Vector3f vj,
                                       Vector3f vi);
-
-    // For surface tension:
-    static Vector3f calculateSurfaceNormal(float mj, float densityj, Vector3f gradPolySixKernel);
-    static float calculateLaplacianColorField(float mj, float densityj, float laplacianPolySixKernel);
-
   };
 
 #endif /* FORCEUTILITIES_H_ */

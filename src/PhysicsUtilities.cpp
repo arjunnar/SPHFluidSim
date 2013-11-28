@@ -74,7 +74,7 @@ void PhysicsUtilities::setVelocityOfParticle(vector<Vector3f> &state, int partic
 float PhysicsUtilities::getPressureAtLocation(float densityAtLoc, float restDensity, float gasConstant)
 {
     // Eq(12)
-    return gasConstant * (pow(densityAtLoc/restDensity, 7) - 1);
+    return gasConstant * (densityAtLoc - restDensity);
 }
 
 Vector3f PhysicsUtilities::getViscosityForce(float mj,
@@ -89,19 +89,6 @@ Vector3f PhysicsUtilities::getViscosityForce(float mj,
 	Vector3f velocityDiff = vj - vi;
     return constant * viscosityKernelLaplacian * velocityDiff;
 }
-
-Vector3f PhysicsUtilities::calculateSurfaceNormal(float mj, float densityj, Vector3f gradPolySixKernel)
-{
-    // Eq(16) - just the gradient of the color field
-    return (mj / densityj) * gradPolySixKernel;
-}
-
-float PhysicsUtilities::calculateLaplacianColorField(float mj, float densityj, float laplacianPolySixKernel)
-{
-    // Laplacian of Eq(15)
-    return (mj / densityj) * laplacianPolySixKernel;
-}
-
 
 
 

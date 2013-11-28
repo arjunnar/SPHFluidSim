@@ -10,7 +10,8 @@ Vector3f KernelUtilities::gradSpikyKernel(Vector3f r)
 
     if (0 <= rmag && rmag <= h)
     {
-        grad = SPIKY_KERNEL_GRAD_CONSTANT * pow(h - rmag, 2.0) * r.normalized();
+        float constant = SPIKY_KERNEL_GRAD_CONSTANT * pow(h - rmag, 2.0) / rmag ;
+        grad = constant * r;
     }
 
     else
@@ -44,31 +45,46 @@ float KernelUtilities::polySixKernel(Vector3f r)
 Vector3f KernelUtilities::gradPolySixKernel(Vector3f r)
 {
     float rMagSquared = r.absSquared();
-    return GRAD_POLY_SIX_KERNEL_CONSTANT * ( pow(h, 2.0) - rMagSquared ) * r;
+    return GRAD_POLY_SIX_KERNEL_CONSTANT * pow( (pow(h, 2.0) - rMagSquared), 2.0) * r;
 }
 
 float KernelUtilities::laplacianPolySixKernel(Vector3f r)
 {
-    float hSquared = pow(h, 2.0);
-    float rMagSquared = r.absSquared();
-    float firstTerm = LAPLACE_POLY_SIX_KERNEL_CONSTANT * (hSquared - rMagSquared);
-    float secondTerm = rMagSquared - 0.75 * (firstTerm);
-    return firstTerm * secondTerm;
+    float rmag = r.abs();
+    float laplacian;
+
+    if (0 <= rmag && rmag <= h)
+    {
+        float hSquared = pow(h, 2.0);
+        float rMagSquared = r.absSquared();
+        float firstTerm = LAPLACIAN_POLY_SIX_KERNEL_CONSTANT * (hSquared - rMagSquared);
+        float secondTerm = rMagSquared - 0.75 * (hSquared - rMagSquared);
+        laplacian = firstTerm * secondTerm;
+    }
+
+    else
+    {
+        laplacian = 0.0f;
+    }
+
+    return laplacian;
 }
 
 float KernelUtilities::laplacianViscosityKernel(Vector3f r)
 {
     // Laplacian of Eq(22); computed for us in the paper
     float rmag = r.abs();
-    float result;
+    float laplacian;
 
     if (0 <= rmag && rmag <= h)
     {
-        return LAPLACE_VISCOSITY_KERNEL_CONSTANT * (h - rmag);
+        laplacian = LAPLACIAN_VISCOSITY_KERNEL_CONSTANT * (h - rmag);
     }
 
     else
     {
-        result = 0.0f;
+        laplacian = 0.0f;
     }
+
+    return laplacian;
 }

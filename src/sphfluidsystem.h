@@ -40,10 +40,11 @@ class SPHFluidSystem : public ParticleSystem
         float TENSION_CONSTANT;
         float TENSION_THRESHOLD;
         float SELF_DENSITY_CONSTANT;
+        float SELF_LAPLACIAN_COLOR_FIELD;
 
         // Helper functions
         //float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
-        float calculateDensitiesAndPressures(vector<Vector3f> &state);
+        void calculateDensitiesAndPressures(vector<Vector3f> &state);
         void initConstants();
         bool isNan(float val);
         bool isNan(Vector3f vec);
