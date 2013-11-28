@@ -11,6 +11,7 @@ class DebugUtilities
 {
 public:
     static void printVectorInt(vector<int> &vec);
+    static void printVector3f(Vector3f &vec);
 };
 
 #endif // DEBUGUTILITIES_H

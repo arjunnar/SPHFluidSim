@@ -10,3 +10,10 @@ void DebugUtilities::printVectorInt(vector<int> &vec)
     }
 }
 
+void DebugUtilities::printVector3f(Vector3f &vec)
+{
+    cout << " ( " << vec.x() << " , " << vec.y() << " , " << vec.z() << " ) ";
+    cout << endl;
+}
+
+

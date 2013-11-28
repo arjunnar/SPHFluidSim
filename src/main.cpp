@@ -17,7 +17,7 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 800;
+int numParticles = 0; // Not needed
 float boxSizeX = 0.5;
 float boxSizeY = 0.9;
 float boxSizeZ = 0.5;
@@ -46,9 +46,9 @@ namespace
 
     timeStepper = new ForwardEuler();
 
-	integratorType = IntegratorType::RUNGE_KUTTA;
+    integratorType = IntegratorType::FORWARD_EULER;
 
-    stepSize = 0.003;
+    stepSize = 0.03;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
@@ -59,14 +59,14 @@ namespace
       if (coord < 0.0f + collisionEpsilon)
 	  {
 		  coord = collisionEpsilon;
-          vel = -0.5* vel;
+          vel = -0.3 * vel;
 		  fixed = true;
 	  }
 
       else if (coord > boxSize - collisionEpsilon)
 	  {
           coord = boxSize - collisionEpsilon;
-          vel = -0.5 * vel;
+          vel = -0.3 * vel;
 		  fixed = true;
 	  }
 
