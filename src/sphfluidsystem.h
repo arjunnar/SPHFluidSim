@@ -54,6 +54,7 @@ class SPHFluidSystem : public ParticleSystem
         void buildTwoParticleSystemNeighbors();
         void buildTwoParticleSystemNotNeighbors();
         void build2DTestSystem();
+        void buildTestSystem2();
 };
 
 #endif // SPHFLUIDSYSTEM_H

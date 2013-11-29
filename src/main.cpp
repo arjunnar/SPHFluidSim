@@ -48,7 +48,7 @@ namespace
 
     integratorType = IntegratorType::FORWARD_EULER;
 
-    stepSize = 0.003;
+    stepSize = 0.015;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
@@ -59,14 +59,14 @@ namespace
       if (coord < 0.0f + collisionEpsilon)
 	  {
 		  coord = collisionEpsilon;
-          vel = -0.0 * vel;
+          vel = -0.5 * vel;
 		  fixed = true;
 	  }
 
       else if (coord > boxSize - collisionEpsilon)
 	  {
           coord = boxSize - collisionEpsilon;
-          vel = -0.0 * vel;
+          vel = -0.5 * vel;
 		  fixed = true;
 	  }
 
@@ -98,6 +98,14 @@ namespace
           bool fixedX = fixCoord(x, velX, boxSizeX);
           bool fixedY = fixCoord(y, velY, boxSizeY);
           bool fixedZ = fixCoord(z, velZ, boxSizeZ);
+
+          /*
+          if (fixedZ)
+          {
+              velY = 1.0;
+              velX = 1.0;
+          }
+          */
 
           if (fixedX || fixedY || fixedZ)
           {

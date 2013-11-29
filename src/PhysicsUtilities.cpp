@@ -73,8 +73,9 @@ void PhysicsUtilities::setVelocityOfParticle(vector<Vector3f> &state, int partic
 
 float PhysicsUtilities::getPressureAtLocation(float densityAtLoc, float restDensity, float gasConstant)
 {
+    return gasConstant * fmax( pow(densityAtLoc/restDensity, 3.0) - 1, 0.0 );
     // Eq(12)
-    return gasConstant * (densityAtLoc - restDensity);
+    //return gasConstant * (densityAtLoc - restDensity);
 }
 
 Vector3f PhysicsUtilities::getViscosityForce(float mj,
