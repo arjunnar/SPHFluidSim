@@ -49,7 +49,7 @@ private:
 	// Instance variables
 	Vector3f origin;
 	Vector3f topRightCorner;
-    static const int NUM_CELLS_PER_DIMEN = 10;
+    static const int NUM_CELLS_PER_DIMEN = 20;
     std::vector<std::list<int>> grid;
 
     float sideLengthX;

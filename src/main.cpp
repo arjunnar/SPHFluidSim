@@ -18,9 +18,9 @@ using namespace std;
 
 // Globals here.
 int numParticles = 0; // Not needed
-float boxSizeX = 0.4;
-float boxSizeY = 0.4;
-float boxSizeZ = 0.4;
+float boxSizeX = 0.8;
+float boxSizeY = 0.8;
+float boxSizeZ = 0.8;
 
 namespace
 {
@@ -48,7 +48,7 @@ namespace
 
     integratorType = IntegratorType::FORWARD_EULER;
 
-    stepSize = 0.003;
+    stepSize = 0.005;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
@@ -59,14 +59,14 @@ namespace
       if (coord < 0.0f + collisionEpsilon)
 	  {
 		  coord = collisionEpsilon;
-          vel = -0.2 * vel;
+          vel = -0.5 * vel;
 		  fixed = true;
 	  }
 
       else if (coord > boxSize - collisionEpsilon)
 	  {
           coord = boxSize - collisionEpsilon;
-          vel = -0.2 * vel;
+          vel = -0.5 * vel;
 		  fixed = true;
 	  }
 

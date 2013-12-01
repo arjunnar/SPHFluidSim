@@ -13,15 +13,11 @@ SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
 {
     initConstants();
 
-    //buildTwoParticleSystemNeighbors();
-    //buildTwoParticleSystemNotNeighbors();
-    //buildTestSystem2();
-    //testOneInitializeSystem();
-    //buildTestSystem2();
+    //build3DTestSystem();
     build2DTestSystem();
 
     Vector3f origin = Vector3f::ZERO;
-    particleGrid = ParticleGrid(origin, 0.4 , 0.4, 0.4);
+    particleGrid = ParticleGrid(origin, 0.8 , 0.8,  0.8);
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
 }
@@ -30,10 +26,10 @@ void SPHFluidSystem::initConstants()
 {
     PARTICLE_MASS = 0.02;
     GRAVITY_CONSTANT = 6.5;
-    REST_DENSITY = 900;
+    REST_DENSITY = 920;
     GAS_CONSTANT = 1.0;
     VISCOSITY_CONSTANT = 6.0;
-    TENSION_CONSTANT = 0.10;
+    TENSION_CONSTANT = 0.0004;
     TENSION_THRESHOLD = 6.0;
     SELF_DENSITY_CONSTANT = PARTICLE_MASS * KernelUtilities::polySixKernel(Vector3f::ZERO);
     SELF_LAPLACIAN_COLOR_FIELD = PARTICLE_MASS * KernelUtilities::laplacianPolySixKernel(Vector3f::ZERO);
@@ -114,19 +110,19 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
                                                                            densityAtNeighborLoc,
                                                                            spikyKernelGrad );
 
-                cout << "Pressure contribution: "; DebugUtilities::printVector3f(pressureContribution);
+                //cout << "Pressure contribution: "; DebugUtilities::printVector3f(pressureContribution);
 
-                cout << "Particle loc: "; DebugUtilities::printVector3f(positionOfParticle);
-                cout << "Density at particle loc: " << densityAtParticleLoc;
-                cout << "Pressure at particle loc: " << pressureAtParticleLoc << endl;
+                //cout << "Particle loc: "; DebugUtilities::printVector3f(positionOfParticle);
+                //cout << "Density at particle loc: " << densityAtParticleLoc;
+                //cout << "Pressure at particle loc: " << pressureAtParticleLoc << endl;
 
-                cout << "NeighborI: " << neighborI << endl;
-                cout << "Neighbor loc: "; DebugUtilities::printVector3f(positionOfNeighbor);
-                cout << "Density at neighbor loc: " << densityAtNeighborLoc << endl;
+                //cout << "NeighborI: " << neighborI << endl;
+                //cout << "Neighbor loc: "; DebugUtilities::printVector3f(positionOfNeighbor);
+                //cout << "Density at neighbor loc: " << densityAtNeighborLoc << endl;
                 float pressureAtNeighborLoc = PhysicsUtilities::getPressureAtLocation(densityAtNeighborLoc, REST_DENSITY, GAS_CONSTANT);
-                cout << "Pressure at neighbor loc: " << pressureAtNeighborLoc << endl;
+                //cout << "Pressure at neighbor loc: " << pressureAtNeighborLoc << endl;
 
-                cout << "Spiky kernel grad: "; DebugUtilities::printVector3f(spikyKernelGradForDebugging);
+                //cout << "Spiky kernel grad: "; DebugUtilities::printVector3f(spikyKernelGradForDebugging);
 
                 // CALCULATE VISCOSITY CONTRIBUTION FROM THE NEIGHBOR
                 float laplacianKernel = KernelUtilities::laplacianViscosityKernel(rForKernel);
@@ -234,10 +230,10 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
             totalSurfaceTensionForce = Vector3f::ZERO;
         }
 
-        cout << "Particle: " << particleIndex << endl;
-        cout << "Total surface tension: "; DebugUtilities::printVector3f(totalSurfaceTensionForce);
-        cout << "Total viscosity: "; DebugUtilities::printVector3f(totalViscosityForce);
-        cout << "Total pressure: "; DebugUtilities::printVector3f(totalPressureForce);
+        //cout << "Particle: " << particleIndex << endl;
+        //cout << "Total surface tension: "; DebugUtilities::printVector3f(totalSurfaceTensionForce);
+        //cout << "Total viscosity: "; DebugUtilities::printVector3f(totalViscosityForce);
+        //cout << "Total pressure: "; DebugUtilities::printVector3f(totalPressureForce);
 
         if (totalSurfaceTensionForce.abs() > 0.0f)
         {
@@ -248,7 +244,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
         Vector3f totalForce = totalPressureForce + totalSurfaceTensionForce + totalViscosityForce;
 
-        cout << "Total force: "; DebugUtilities::printVector3f(totalForce);
+        //cout << "Total force: "; DebugUtilities::printVector3f(totalForce);
 
         // COMPUTE TOTAL ACCELERATION OF PARTICLE
 
@@ -260,13 +256,26 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
         Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension;
 
-        cout << "Accel total: "; DebugUtilities::printVector3f(accelTotal);
+        //cout << "Accel total: "; DebugUtilities::printVector3f(accelTotal);
 
         derivative.push_back(velocityOfParticle);
         derivative.push_back(accelTotal);
     }
 
+
+    vector<Vector3f> deriv;
+    /*
+    for (int i = 0; i < m_numParticles; ++i)
+    {
+        deriv.push_back(Vector3f::ZERO);
+        deriv.push_back(Vector3f::ZERO);
+    }
+
+    return deriv;
+    */
     return derivative;
+
+
 }
 
 void SPHFluidSystem::draw()
@@ -283,7 +292,7 @@ void SPHFluidSystem::draw()
         }
         glPushMatrix();
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-        glutSolidSphere(KernelUtilities::h/4.0, 10.0f,10.0f);
+        glutSolidSphere(KernelUtilities::h/2.0, 10.0f,10.0f);
         glPopMatrix();
     }
 
@@ -358,29 +367,32 @@ void SPHFluidSystem::buildTwoParticleSystemNeighbors()
     m_numParticles = 2;
 }
 
-void SPHFluidSystem::testOneInitializeSystem()
+/*
+void SPHFluidSystem::build3DTestSystem()
 {
-    for (int k = 0; k < 20; k++)
+    for (int k = 0; k < 10; k++)
     {
-        for (int i = 0; i < 15; i++ )
+        for (int i = 0; i < 10; i++ )
         {
-            for (int j = 0; j < 20; j++) {
-                Vector3f point(0.14 + .01 * i + .005 * (i %2), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
+            for (int j = 0; j < 10; j++) {
+                //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
+                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.1 + k * 0.03 );
                 m_vVecState.push_back(point);
                 m_vVecState.push_back(Vector3f::ZERO);
             }
         }
     }
 
-    m_numParticles = 6000;
+    m_numParticles = 1000;
 }
+*/
 
 void SPHFluidSystem::build2DTestSystem()
 {
     float k = 0.2;
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 20; ++i)
     {
-        for (int j = 0; j < 10; ++j)
+        for (int j = 0; j < 20; ++j)
         {
             Vector3f point(0.02 * (i + 1), 0.02 * (j + 1), k);
             m_vVecState.push_back(point);
@@ -389,22 +401,22 @@ void SPHFluidSystem::build2DTestSystem()
         }
     }
 
-    m_numParticles = 100;
+    m_numParticles = 400;
 
 }
 
-void SPHFluidSystem::buildTestSystem2()
+void SPHFluidSystem::build3DTestSystem()
 {
-    for (float x = 0.1; x <= 0.384; x += 0.02)
+    for (int k = 0; k < 10; k++)
     {
-        for (float y = 0.1; y <= 0.576; y += 0.02)
+        for (int i = 0; i < 10; i++ )
         {
-            for (float z = 0.1; z <= 0.384; z+= 0.02)
-             {
-                 Vector3f point(x, y, z);
-                 m_vVecState.push_back(point);
-                 m_vVecState.push_back(Vector3f::ZERO);
-             }
+            for (int j = 0; j < 10; j++) {
+                //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
+                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.05 + k * 0.03 );
+                m_vVecState.push_back(point);
+                m_vVecState.push_back(Vector3f::ZERO);
+            }
         }
     }
 

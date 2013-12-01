@@ -50,10 +50,11 @@ class SPHFluidSystem : public ParticleSystem
         bool isNan(Vector3f vec);
 
         // Different system initializations
-        void testOneInitializeSystem();
+        void build3DTestSystem();
+        void build2DTestSystem();
+
         void buildTwoParticleSystemNeighbors();
         void buildTwoParticleSystemNotNeighbors();
-        void build2DTestSystem();
         void buildTestSystem2();
 };
 
