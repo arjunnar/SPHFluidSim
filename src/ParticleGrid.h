@@ -12,6 +12,7 @@
 #include "tuple.h"
 #include  <map>
 #include <list>
+#include "kernelutilities.h"
 
 typedef std::vector<std::vector<std::vector<std::vector<int> > > > Grid3D;
 
@@ -49,7 +50,7 @@ private:
 	// Instance variables
 	Vector3f origin;
 	Vector3f topRightCorner;
-    static const int NUM_CELLS_PER_DIMEN = 20;
+    int NUM_CELLS_PER_DIMEN;
     std::vector<std::list<int>> grid;
 
     float sideLengthX;

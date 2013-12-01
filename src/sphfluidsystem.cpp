@@ -6,24 +6,25 @@ using namespace std;
 
 SPHFluidSystem::SPHFluidSystem()
 {
-    SPHFluidSystem(5000);
+
 }
 
-SPHFluidSystem::SPHFluidSystem(int numParticles) : ParticleSystem(numParticles)
+SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ)
 {
     initConstants();
 
-    //build3DTestSystem();
-    build2DTestSystem();
+    build3DTestSystem();
+    //build2DTestSystem();
 
     Vector3f origin = Vector3f::ZERO;
-    particleGrid = ParticleGrid(origin, 0.8 , 0.8,  0.8);
+    particleGrid = ParticleGrid(origin, boxSizeX , boxSizeY,  boxSizeZ);
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
 }
 
 void SPHFluidSystem::initConstants()
 {
+    // Physics constants
     PARTICLE_MASS = 0.02;
     GRAVITY_CONSTANT = 6.5;
     REST_DENSITY = 920;
@@ -33,6 +34,10 @@ void SPHFluidSystem::initConstants()
     TENSION_THRESHOLD = 6.0;
     SELF_DENSITY_CONSTANT = PARTICLE_MASS * KernelUtilities::polySixKernel(Vector3f::ZERO);
     SELF_LAPLACIAN_COLOR_FIELD = PARTICLE_MASS * KernelUtilities::laplacianPolySixKernel(Vector3f::ZERO);
+
+    // Other constants
+    MIN_DENSITY = 700;
+    MAX_DENSITY = 5000;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
@@ -88,7 +93,6 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
                 gradColorFieldContribution = Vector3f::ZERO;
                 laplacianColorFieldContribution = 0.0f;
 
-                //rForKernel = Vector3f(0.003, 0.003, 0.003);
             }
 
             else
@@ -280,19 +284,22 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
 void SPHFluidSystem::draw()
 {
-    int numNanPositions = 0;
     for (int i = 0; i < m_numParticles; i++)
     {
         // Draw the particles
         Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
+
         if (isNan(posParticle))
         {
-            cout << "Encountered NAN position: " << "( " << posParticle.x() << " , " << posParticle.y() << " ," << posParticle.z() << " )" << endl;
-            //++numNanPositions;
+            cout << "Encountered NAN position for particle: " << i; DebugUtilities::printVector3f(posParticle);
         }
+
         glPushMatrix();
+        Vector3f colorParticle = getParticleColor(vecParticleDensities[i]);
+        GLfloat particleColor[] = { colorParticle.x(), colorParticle.y(), colorParticle.z(), 1.0f};
+        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-        glutSolidSphere(KernelUtilities::h/2.0, 10.0f,10.0f);
+        glutSolidSphere(KernelUtilities::h/2.0, 10, 10);
         glPopMatrix();
     }
 
@@ -310,6 +317,10 @@ void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
 
+    // Get an idea of the min and max density values so we can color the particles based on density.
+    float minDensity = INFINITY;
+    float maxDensity = -1 * INFINITY;
+
     for (int i = 0; i < m_numParticles; ++i)
     {
         float density = 0;
@@ -325,9 +336,26 @@ void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
         density += SELF_DENSITY_CONSTANT;
         vecParticleDensities.push_back(density);
 
+        minDensity = min(density, minDensity);
+        maxDensity = max(density, maxDensity);
+
         float pressure = PhysicsUtilities::getPressureAtLocation(density, REST_DENSITY, GAS_CONSTANT);
         vecParticlePressures.push_back(pressure);
     }
+
+    cout << "Min density: " << minDensity << endl;
+    cout << "Max density: " << maxDensity << endl;
+}
+
+Vector3f SPHFluidSystem::getParticleColor(float densityAtParticleLoc)
+{
+    densityAtParticleLoc = max(MIN_DENSITY, densityAtParticleLoc);
+    densityAtParticleLoc = min(MAX_DENSITY, densityAtParticleLoc);
+
+    float percentIntoInterval = (densityAtParticleLoc - MIN_DENSITY) / (MAX_DENSITY - MIN_DENSITY);
+    return Vector3f(percentIntoInterval, 0.0f,  1 - percentIntoInterval);
+
+
 }
 
 bool SPHFluidSystem::isNan(float val)

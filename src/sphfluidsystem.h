@@ -16,7 +16,7 @@ class SPHFluidSystem : public ParticleSystem
 {
    public:
         SPHFluidSystem();
-        SPHFluidSystem(int numParticles);
+        SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ);
         virtual ~SPHFluidSystem();
 
         // Functions inherited from ParticleSystem
@@ -42,12 +42,16 @@ class SPHFluidSystem : public ParticleSystem
         float SELF_DENSITY_CONSTANT;
         float SELF_LAPLACIAN_COLOR_FIELD;
 
+        // Other constants
+        float MIN_DENSITY;
+        float MAX_DENSITY;
+
         // Helper functions
-        //float calcDensity(int particleIndex, vector<int> &neighborIndexes, vector<Vector3f> &state);
         void calculateDensitiesAndPressures(vector<Vector3f> &state);
         void initConstants();
         bool isNan(float val);
         bool isNan(Vector3f vec);
+        Vector3f getParticleColor(float densityAtParticleLoc);
 
         // Different system initializations
         void build3DTestSystem();

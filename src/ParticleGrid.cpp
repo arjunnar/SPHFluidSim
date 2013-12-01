@@ -10,11 +10,13 @@
 
 ParticleGrid::ParticleGrid()
 {
-    ParticleGrid(Vector3f::ZERO, 0.6, 0.9, 0.6);
+    ParticleGrid(Vector3f::ZERO, 0.8, 0.8, 0.8);
 }
 
 ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
+    NUM_CELLS_PER_DIMEN = sizeX / KernelUtilities::h;
+
     grid = std::vector<std::list<int>>(NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN);
     for (int i = 0; i < grid.size(); ++i)
     {

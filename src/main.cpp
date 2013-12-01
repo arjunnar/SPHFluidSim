@@ -17,10 +17,9 @@
 using namespace std;
 
 // Globals here.
-int numParticles = 0; // Not needed
-float boxSizeX = 0.8;
-float boxSizeY = 0.8;
-float boxSizeZ = 0.8;
+float boxSizeX = 0.4;
+float boxSizeY = 0.4;
+float boxSizeZ = 0.4;
 
 namespace
 {
@@ -42,7 +41,7 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    system = new SPHFluidSystem(numParticles);
+    system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ);
 
     timeStepper = new ForwardEuler();
 
@@ -123,12 +122,11 @@ namespace
   void drawSystem()
   {
     // Base material colors (they don't change)
-    GLfloat particleColor[] = {0.4f, 0.7f, 1.0f, 1.0f};
-    GLfloat tankColor[] = {0.0f, 0.0f, 1.0f, 0.3f};
-    
-    glTranslatef(-1.0f, -1.0f, 0.0f); // Origin at (-1.0, -1.0, 0.0). Everything drawn relative to this point.
+    GLfloat tankColor[] = {1.0f, 1.0f, 1.0f, 0.05f};
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor);    
+    //glPushMatrix();
+
+    //glTranslatef(-boxSizeX/2, 0, boxSizeZ/2);
 
     system->draw();
 
@@ -172,6 +170,8 @@ namespace
     glScaled(0.02f, boxSizeY, boxSizeZ);
     glutSolidCube(1);
     glPopMatrix();
+
+    //glPopMatrix();
 }
         
 
@@ -368,6 +368,9 @@ namespace
 
         glLoadMatrixf( camera.viewMatrix() );
 
+        glPushMatrix();
+        glTranslatef(-boxSizeX/2, -boxSizeY/2, boxSizeZ/2);
+
         drawSystem();
 
         // This draws the coordinate axes when you're rotating, to
@@ -402,9 +405,13 @@ namespace
             glPopAttrib();
             glPopMatrix();
         }
-                 
+
+        glPopMatrix();
+
         // Dump the image to the screen.
         glutSwapBuffers();
+
+
     }
 
     void timerFunc(int t)
@@ -432,7 +439,7 @@ int main( int argc, char* argv[] )
     
     camera.SetDimensions( 1000, 1000 );
 
-    camera.SetDistance( 7.0 );
+    camera.SetDistance( 3.0 );
     camera.SetCenter(Vector3f::ZERO);
     
     glutCreateWindow("SPH Fluid Simulation");
