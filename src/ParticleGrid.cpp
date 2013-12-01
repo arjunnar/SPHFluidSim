@@ -15,7 +15,7 @@ ParticleGrid::ParticleGrid()
 
 ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
-    grid = std::vector<std::list<int>>(100 * 100 * 100);
+    grid = std::vector<std::list<int>>(NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN);
     for (int i = 0; i < grid.size(); ++i)
     {
         grid[i] = std::list<int>();
