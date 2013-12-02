@@ -475,11 +475,11 @@ void SPHFluidSystem::build2DTestSystem()
 
 void SPHFluidSystem::build2DTestSystem2()
 {
-    for (int k = 0; k < 15; +k)
+    for (int k = 0; k < 10; +k)
     {
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 10; ++i)
         {
-            for (int j = 0; j < 15; ++j)
+            for (int j = 0; j < 10; ++j)
             {
                 Vector3f point(0.03 * (i + 1), 0.03 * (j + 1), 0.03 + k * 0.03);
                 m_vVecState.push_back(point);
@@ -495,7 +495,7 @@ void SPHFluidSystem::build2DTestSystem2()
     VISCOSITY_CONSTANT = 2.6;
     REST_DENSITY = 300;
     */
-    m_numParticles = 3375;
+    m_numParticles = 1000;
 }
 
 void SPHFluidSystem::build3DTestSystem()
