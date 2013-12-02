@@ -50,7 +50,9 @@ private:
 	// Instance variables
 	Vector3f origin;
 	Vector3f topRightCorner;
-    int NUM_CELLS_PER_DIMEN;
+    int numCellsPerDimenX;
+    int numCellsPerDimenY;
+    int numCellsPerDimenZ;
     std::vector<std::list<int>> grid;
 
     float sideLengthX;
@@ -64,7 +66,9 @@ private:
     map<int, Tuple::tuple<int, 3>> mapIndexesToGridCoords;
 
 	// Helper functions
-	inline bool isCoordValid(int val);
+    inline bool isCoordValidX(int val);
+    inline bool isCoordValidY(int val);
+    inline bool isCoordValidZ(int val);
     inline int getGridIndex(int i, int j, int k);
     inline std::list<int> getGridListAt(int i, int j, int k);
 };

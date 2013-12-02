@@ -20,6 +20,12 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ)
     particleGrid = ParticleGrid(origin, boxSizeX , boxSizeY,  boxSizeZ);
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
+
+    vHalfStepBefore = vector<Vector3f>();
+    for (int i = 0; i < m_numParticles; ++i)
+    {
+        vHalfStepBefore.push_back(Vector3f::ZERO);
+    }
 }
 
 void SPHFluidSystem::initConstants()
@@ -38,11 +44,45 @@ void SPHFluidSystem::initConstants()
     // Other constants
     MIN_DENSITY = 700;
     MAX_DENSITY = 5000;
+
+    timeStep = 0.003;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
 {
 
+}
+
+void SPHFluidSystem::advanceState()
+{
+    vector<Vector3f> deriv = evalF(m_vVecState);
+    vector<Vector3f> newState = vector<Vector3f>();
+
+    vector<Vector3f> viPlusHalf = vector<Vector3f>();
+    for (int i = 1; i < deriv.size(); i += 2)
+    {
+        Vector3f nextVal = vHalfStepBefore[i] + deriv[i] * timeStep;
+        viPlusHalf.push_back(nextVal);
+    }
+
+
+    for (int i = 0; i < m_vVecState.size(); ++i)
+    {
+        if (i % 2 == 0)
+        {
+            Vector3f prevPosition = m_vVecState[i];
+            Vector3f newPosition = prevPosition + vHalfStepBefore[i / 2] * timeStep;
+            newState.push_back(newPosition);
+        }
+
+        else
+        {
+            newState.push_back(viPlusHalf[i / 2]);
+        }
+    }
+
+    vHalfStepBefore = viPlusHalf;
+    this->setState(newState);
 }
 
 vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
@@ -239,12 +279,12 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         //cout << "Total viscosity: "; DebugUtilities::printVector3f(totalViscosityForce);
         //cout << "Total pressure: "; DebugUtilities::printVector3f(totalPressureForce);
 
-        if (totalSurfaceTensionForce.abs() > 0.0f)
-        {
+        //if (totalSurfaceTensionForce.abs() > 0.0f)
+        //{
             //cout << "Total surf tension force: "; DebugUtilities::printVector3f(totalSurfaceTensionForce);
             //cout << "Total grad color field: "; DebugUtilities::printVector3f(totalGradColorField);
             //cout << "Total laplacian color field: " << totalLaplacianColorField << endl;
-        }
+        //}
 
         Vector3f totalForce = totalPressureForce + totalSurfaceTensionForce + totalViscosityForce;
 
@@ -299,7 +339,7 @@ void SPHFluidSystem::draw()
         GLfloat particleColor[] = { colorParticle.x(), colorParticle.y(), colorParticle.z(), 1.0f};
         glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
         glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-        glutSolidSphere(KernelUtilities::h/2.0, 10, 10);
+        glutSolidSphere(0.02, 10, 10);
         glPopMatrix();
     }
 
@@ -343,8 +383,8 @@ void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
         vecParticlePressures.push_back(pressure);
     }
 
-    cout << "Min density: " << minDensity << endl;
-    cout << "Max density: " << maxDensity << endl;
+    //cout << "Min density: " << minDensity << endl;
+    //cout << "Max density: " << maxDensity << endl;
 }
 
 Vector3f SPHFluidSystem::getParticleColor(float densityAtParticleLoc)
@@ -431,6 +471,31 @@ void SPHFluidSystem::build2DTestSystem()
 
     m_numParticles = 400;
 
+}
+
+void SPHFluidSystem::build2DTestSystem2()
+{
+    for (int k = 0; k < 15; +k)
+    {
+        for (int i = 0; i < 15; ++i)
+        {
+            for (int j = 0; j < 15; ++j)
+            {
+                Vector3f point(0.03 * (i + 1), 0.03 * (j + 1), 0.03 + k * 0.03);
+                m_vVecState.push_back(point);
+                m_vVecState.push_back(Vector3f::ZERO);
+
+            }
+        }
+    }
+    /*
+    TENSION_CONSTANT = 0.1;
+    TENSION_THRESHOLD = 6.0;
+    GAS_CONSTANT = 2.0;
+    VISCOSITY_CONSTANT = 2.6;
+    REST_DENSITY = 300;
+    */
+    m_numParticles = 3375;
 }
 
 void SPHFluidSystem::build3DTestSystem()

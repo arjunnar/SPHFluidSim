@@ -23,6 +23,7 @@ class SPHFluidSystem : public ParticleSystem
         vector<Vector3f> evalF(vector<Vector3f> state);
         void draw();
         void reinitializeSystem();
+        void advanceState();
 
    private:
         // Instance variables
@@ -30,6 +31,10 @@ class SPHFluidSystem : public ParticleSystem
         //map<int, float> densityCache;
         vector<float> vecParticleDensities;
         vector<float> vecParticlePressures;
+
+        // For leapfrog integration
+        float timeStep;
+        vector<Vector3f> vHalfStepBefore;
 
         // Physics constants
         float PARTICLE_MASS;
@@ -54,8 +59,9 @@ class SPHFluidSystem : public ParticleSystem
         Vector3f getParticleColor(float densityAtParticleLoc);
 
         // Different system initializations
-        void build3DTestSystem();
         void build2DTestSystem();
+        void build2DTestSystem2();
+        void build3DTestSystem();
 
         void buildTwoParticleSystemNeighbors();
         void buildTwoParticleSystemNotNeighbors();

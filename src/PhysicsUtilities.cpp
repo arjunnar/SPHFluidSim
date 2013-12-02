@@ -75,7 +75,7 @@ float PhysicsUtilities::getPressureAtLocation(float densityAtLoc, float restDens
 {
     //return gasConstant * fmax( pow(densityAtLoc/restDensity, 3.0) - 1, 0.0 );
     // Eq(12)
-    return gasConstant * (densityAtLoc - restDensity);
+    return gasConstant * max(0.0f, (densityAtLoc - restDensity));
 }
 
 Vector3f PhysicsUtilities::getViscosityForce(float mj,

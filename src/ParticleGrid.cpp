@@ -15,9 +15,11 @@ ParticleGrid::ParticleGrid()
 
 ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
-    NUM_CELLS_PER_DIMEN = sizeX / KernelUtilities::h;
+    numCellsPerDimenX = sizeX / KernelUtilities::h;
+    numCellsPerDimenY = sizeY / KernelUtilities::h;
+    numCellsPerDimenZ = sizeZ / KernelUtilities::h;
 
-    grid = std::vector<std::list<int>>(NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN);
+    grid = std::vector<std::list<int>>(numCellsPerDimenX * numCellsPerDimenY * numCellsPerDimenZ);
     for (int i = 0; i < grid.size(); ++i)
     {
         grid[i] = std::list<int>();
@@ -32,9 +34,9 @@ ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float size
     topRightCorner = origin + Vector3f(sideLengthX, sideLengthY, sideLengthZ);
 
     // Dimensions of a single cell in the grid
-    gridSideLengthX = sideLengthX / NUM_CELLS_PER_DIMEN;
-    gridSideLengthY = sideLengthY / NUM_CELLS_PER_DIMEN;
-    gridSideLengthZ = sideLengthZ / NUM_CELLS_PER_DIMEN;
+    gridSideLengthX = KernelUtilities::h;
+    gridSideLengthY = KernelUtilities::h;
+    gridSideLengthZ = KernelUtilities::h;
 }
 
 ParticleGrid::~ParticleGrid()
@@ -52,7 +54,7 @@ void ParticleGrid::initializeGrid(std::vector<Vector3f> &particleLocations)
         int newj = gridCoords[1];
         int newk = gridCoords[2];
 
-        if ( !(isCoordValid(newi) && isCoordValid(newk) && isCoordValid(newj)) )
+        if ( !(isCoordValidX(newi) && isCoordValidY(newj) && isCoordValidZ(newk)) )
 		{
             // Particle is outside of the grid
 			continue;
@@ -120,18 +122,18 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 	for (int iIncr = -1; iIncr <= 1; ++iIncr)
 	{
         int iNeighbor = iParticle + iIncr;
-		if (!isCoordValid(iNeighbor)) { continue; }
+        if (!isCoordValidX(iNeighbor)) { continue; }
 
 		for (int jIncr = -1; jIncr <= 1; ++jIncr)
 		{
 			int jNeighbor = jParticle + jIncr;
-			if (!isCoordValid(jNeighbor)) { continue; }
+            if (!isCoordValidY(jNeighbor)) { continue; }
 
 			for (int kIncr = -1; kIncr <= 1; ++kIncr)
 			{
 				int kNeighbor = kParticle + kIncr;
 				bool inSameCell = iNeighbor == iParticle && jNeighbor == jParticle && kNeighbor == kParticle;
-				if (!isCoordValid(kNeighbor)) { continue; }
+                if (!isCoordValidZ(kNeighbor)) { continue; }
 
                 std::list<int> neighborsInCell = getGridListAt(iNeighbor, jNeighbor, kNeighbor);
 
@@ -150,18 +152,28 @@ std::vector<int> ParticleGrid::getNeighborParticleIndexes(int particleIndex, Vec
 }
 
 // Helper functions
-inline bool ParticleGrid::isCoordValid(int val)
+inline bool ParticleGrid::isCoordValidX(int val)
 {
-    return 0 <= val && val < NUM_CELLS_PER_DIMEN;
+    return 0 <= val && val < numCellsPerDimenX;
+}
+
+inline bool ParticleGrid::isCoordValidY(int val)
+{
+    return 0 <= val && val < numCellsPerDimenY;
+}
+
+inline bool ParticleGrid::isCoordValidZ(int val)
+{
+    return 0 <= val && val < numCellsPerDimenZ;
 }
 
 inline int ParticleGrid::getGridIndex(int i, int j, int k)
 {
-    return NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN * i + NUM_CELLS_PER_DIMEN * j + k;
+    return numCellsPerDimenX * numCellsPerDimenY * k +  numCellsPerDimenX * j + i;
 }
 inline list<int> ParticleGrid::getGridListAt(int i, int j, int k)
 {
-    return grid[NUM_CELLS_PER_DIMEN * NUM_CELLS_PER_DIMEN * i + NUM_CELLS_PER_DIMEN * j + k];
+    return grid[ numCellsPerDimenX * numCellsPerDimenY * k +  numCellsPerDimenX * j + i ];
 }
 
 

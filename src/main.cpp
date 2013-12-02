@@ -20,10 +20,11 @@ using namespace std;
 float boxSizeX = 0.4;
 float boxSizeY = 0.4;
 float boxSizeZ = 0.4;
+float clothScale = 4.0;
 
 namespace
 {
-    ParticleSystem *system;
+    SPHFluidSystem *system;
     TimeStepper *timeStepper;
     float stepSize;
 
@@ -75,10 +76,12 @@ namespace
 
   void stepSystem()
   {
-      if(timeStepper!=0)
-      {
+     if(timeStepper!=0)
+     {
           timeStepper->takeStep(system,stepSize);
-      }
+     }
+
+      //system->advanceState();
 
       vector<Vector3f> state = system->getState();
       for (vector<Vector3f>::iterator iter = state.begin(); iter != state.end(); iter += 2)
@@ -122,7 +125,8 @@ namespace
   void drawSystem()
   {
     // Base material colors (they don't change)
-    GLfloat tankColor[] = {1.0f, 1.0f, 1.0f, 0.05f};
+    GLfloat tankColor[] = {160/255.0, 160/255.0, 160/255.0, 0.1f};
+    GLfloat floorColor[] = {205.0/255.0, 133.0/255.0, 63/255.0, 0.80};
 
     //glPushMatrix();
 
@@ -166,12 +170,20 @@ namespace
 
     // Right
     glPushMatrix();
+
     glTranslatef(boxSizeX,  boxSizeY/2.0f,  boxSizeZ/2.0f);
     glScaled(0.02f, boxSizeY, boxSizeZ);
     glutSolidCube(1);
     glPopMatrix();
 
-    //glPopMatrix();
+    // Draw the floor
+    glPushMatrix();
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, floorColor);
+    glTranslatef(boxSizeX/2.0f, -0.1f, boxSizeZ/2.0f);
+    glScaled(clothScale, 0.02f, clothScale);
+    glutSolidCube(1);
+    glPopMatrix();
+
 }
         
 
