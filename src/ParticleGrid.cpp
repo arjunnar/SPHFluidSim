@@ -15,9 +15,9 @@ ParticleGrid::ParticleGrid()
 
 ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ)
 {
-    numCellsPerDimenX = sizeX / KernelUtilities::h;
-    numCellsPerDimenY = sizeY / KernelUtilities::h;
-    numCellsPerDimenZ = sizeZ / KernelUtilities::h;
+    numCellsPerDimenX = sizeX / h;
+    numCellsPerDimenY = sizeY / h;
+    numCellsPerDimenZ = sizeZ / h;
 
     grid = std::vector<std::list<int>>(numCellsPerDimenX * numCellsPerDimenY * numCellsPerDimenZ);
     for (int i = 0; i < grid.size(); ++i)
@@ -34,9 +34,9 @@ ParticleGrid::ParticleGrid(Vector3f origin, float sizeX, float sizeY, float size
     topRightCorner = origin + Vector3f(sideLengthX, sideLengthY, sideLengthZ);
 
     // Dimensions of a single cell in the grid
-    gridSideLengthX = KernelUtilities::h;
-    gridSideLengthY = KernelUtilities::h;
-    gridSideLengthZ = KernelUtilities::h;
+    gridSideLengthX = h;
+    gridSideLengthY = h;
+    gridSideLengthZ = h;
 }
 
 ParticleGrid::~ParticleGrid()

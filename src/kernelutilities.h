@@ -3,6 +3,17 @@
 
 #include "vecmath.h"
 
+    static const float h = 0.04;
+
+    static const float SPIKY_KERNEL_GRAD_CONSTANT = -45.0 / (M_PI * pow(h, 6.0));
+
+    static const float LAPLACIAN_VISCOSITY_KERNEL_CONSTANT = 45.0 / (M_PI * pow(h, 6.0));
+
+    static const float POLY_SIX_KERNEL_CONSTANT = 315.0/(64.0 * M_PI * pow(h, 9.0) );
+    static const float GRAD_POLY_SIX_KERNEL_CONSTANT =  -945.0 / (32.0 * M_PI * pow(h, 9.0));
+    static const float LAPLACIAN_POLY_SIX_KERNEL_CONSTANT = 945.0 / (8 * M_PI * pow(h, 9.0));
+
+
 class KernelUtilities
 {
 public:
@@ -15,15 +26,7 @@ public:
     //static float viscosityKernel(Vector3f r, float h);
     static float laplacianViscosityKernel(Vector3f r);
 
-    static constexpr float h = 0.04;
 
-    static constexpr float SPIKY_KERNEL_GRAD_CONSTANT = -45.0 / (M_PI * pow(h, 6.0));
-
-    static constexpr float LAPLACIAN_VISCOSITY_KERNEL_CONSTANT = 45.0 / (M_PI * pow(h, 6.0));
-
-    static constexpr float POLY_SIX_KERNEL_CONSTANT = 315.0/(64.0 * M_PI * pow(h, 9.0) );
-    static constexpr float GRAD_POLY_SIX_KERNEL_CONSTANT =  -945.0 / (32.0 * M_PI * pow(h, 9.0));
-    static constexpr float LAPLACIAN_POLY_SIX_KERNEL_CONSTANT = 945.0 / (8 * M_PI * pow(h, 9.0));
 
 
 

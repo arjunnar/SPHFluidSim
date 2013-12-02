@@ -125,7 +125,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
             Vector3f rForKernel = positionOfParticle - positionOfNeighbor;
 
             float rEpsilon = 0.0005;
-            if (rForKernel.abs() < rEpsilon || rForKernel.abs() > KernelUtilities::h)
+            if (rForKernel.abs() < rEpsilon || rForKernel.abs() > h)
             {
 
                 pressureContribution = Vector3f::ZERO;
