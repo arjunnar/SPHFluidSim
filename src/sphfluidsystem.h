@@ -32,10 +32,6 @@ class SPHFluidSystem : public ParticleSystem
         vector<float> vecParticleDensities;
         vector<float> vecParticlePressures;
 
-        // For leapfrog integration
-        float timeStep;
-        vector<Vector3f> vHalfStepBefore;
-
         // Physics constants
         float PARTICLE_MASS;
         float GRAVITY_CONSTANT;
@@ -62,6 +58,7 @@ class SPHFluidSystem : public ParticleSystem
         void build2DTestSystem();
         void build2DTestSystem2();
         void build3DTestSystem();
+        void build3DTestSystem2();
 
         void buildTwoParticleSystemNeighbors();
         void buildTwoParticleSystemNotNeighbors();

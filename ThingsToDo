@@ -1,19 +1,17 @@
 Things To Do: 
 
-1) Implement Leapfrog integration
-2) More particles 
+1) Implement Leapfrog integration DONE
+2) More particles (Pretty much done)
 3) Explore rendering options (marching cubes or point splatting)
 4) Reset system
-5) Turn off density rendering
-6) Two sets of particles with different rest densities 
-7) POSSIBLY switch between Euler and Leapfrog 
-8) Wall particles
-9) Rotational force 
-10) Presentation stuff: 
+5) Two sets of particles with different rest densities 
+6) Wall breaking
+7) Rotational force 
+8) Presentation stuff: 
 
 - Examples to run 
 - Slides (a few) 
 - Practice 
 
-10) Writeup
+9) Writeup
 

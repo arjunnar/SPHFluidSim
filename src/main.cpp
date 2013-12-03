@@ -17,9 +17,27 @@
 using namespace std;
 
 // Globals here.
-float boxSizeX = 0.4;
-float boxSizeY = 0.4;
-float boxSizeZ = 0.4;
+
+// For 3D Test System 2
+/*
+float boxSizeX = 0.6;
+float boxSizeY = 1.2;
+float boxSizeZ = 0.6;
+*/
+
+// For 3D Test System 1
+/*
+ float boxSizeX = 0.4;
+ float boxSizeY = 0.4;
+ float boxSizeZ = 0.4;
+ */
+
+// For 2D Test System 1 and 2
+float boxSizeX = 0.8;
+float boxSizeY = 0.9;
+float boxSizeZ = 0.8;
+
+
 float clothScale = 4.0;
 
 namespace
@@ -31,8 +49,7 @@ namespace
     enum IntegratorType
     {
         FORWARD_EULER,
-        TRAPEZOIDAL,
-        RUNGE_KUTTA
+        LEAP_FROG
     };
 
     IntegratorType integratorType;
@@ -44,9 +61,9 @@ namespace
 
     system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ);
 
-    timeStepper = new ForwardEuler();
+    timeStepper = new LeapFrog();
 
-    integratorType = IntegratorType::FORWARD_EULER;
+    integratorType = IntegratorType::LEAP_FROG;
 
     stepSize = 0.005;
   }
@@ -231,42 +248,6 @@ namespace
                 system->reinitializeSystem();
                 break;
             }
-
-            case '8':
-            {
-                if (integratorType != FORWARD_EULER)
-                {
-                    integratorType = FORWARD_EULER;
-                    timeStepper = new ForwardEuler();
-                    system->reinitializeSystem();
-                }
-
-                break;
-            }
-
-            case '9':
-            {
-                if (integratorType != TRAPEZOIDAL)
-                {
-                    integratorType = TRAPEZOIDAL;
-                    timeStepper = new Trapezoidal();
-                    system->reinitializeSystem();
-                }
-
-                break;
-            }
-
-            case '0':
-            {
-                if (integratorType != RUNGE_KUTTA)
-                {
-                    integratorType = RUNGE_KUTTA;
-                    timeStepper = new RK4();
-                    system->reinitializeSystem();
-                }
-                break;
-            }
-
 
             default:
                 cout << "Unhandled key press " << key << "." << endl;
@@ -454,7 +435,7 @@ int main( int argc, char* argv[] )
     camera.SetDistance( 3.0 );
     camera.SetCenter(Vector3f::ZERO);
     
-    glutCreateWindow("SPH Fluid Simulation");
+    glutCreateWindow("Smoothed Particle Hydrodynamics Fluid Simulation");
 
     // Initialize OpenGL parameters.
     initRendering();

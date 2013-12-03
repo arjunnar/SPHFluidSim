@@ -15,14 +15,18 @@ public:
 
 class ForwardEuler:public TimeStepper
 {
-  void takeStep(ParticleSystem* particleSystem, float stepSize);
+  void takeStep(ParticleSystem *particleSystem, float stepSize);
 };
 
 class Trapezoidal:public TimeStepper
 {
-  void takeStep(ParticleSystem* particleSystem, float stepSize);
+  void takeStep(ParticleSystem *particleSystem, float stepSize);
 };
 
+class LeapFrog: public TimeStepper
+{
+    void takeStep(ParticleSystem *particleSystem, float stepSize);
+};
 /////////////////////////
 
 //Provided

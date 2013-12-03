@@ -13,19 +13,15 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ)
 {
     initConstants();
 
-    build3DTestSystem();
+    //build3DTestSystem();
     //build2DTestSystem();
+    build2DTestSystem2();
+    //build3DTestSystem2();
 
     Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, boxSizeX , boxSizeY,  boxSizeZ);
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
-
-    vHalfStepBefore = vector<Vector3f>();
-    for (int i = 0; i < m_numParticles; ++i)
-    {
-        vHalfStepBefore.push_back(Vector3f::ZERO);
-    }
 }
 
 void SPHFluidSystem::initConstants()
@@ -44,8 +40,6 @@ void SPHFluidSystem::initConstants()
     // Other constants
     MIN_DENSITY = 700;
     MAX_DENSITY = 5000;
-
-    timeStep = 0.003;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
@@ -55,34 +49,35 @@ SPHFluidSystem::~SPHFluidSystem()
 
 void SPHFluidSystem::advanceState()
 {
-    vector<Vector3f> deriv = evalF(m_vVecState);
-    vector<Vector3f> newState = vector<Vector3f>();
-
-    vector<Vector3f> viPlusHalf = vector<Vector3f>();
-    for (int i = 1; i < deriv.size(); i += 2)
+    /*
+    // Compute new positions using current velocity
+    vector<Vector3f> newPositionsCurrentVelocities = vector<Vector3f>();
+    for (int i = 0; i < m_vVecState.size(); i += 2)
     {
-        Vector3f nextVal = vHalfStepBefore[i] + deriv[i] * timeStep;
-        viPlusHalf.push_back(nextVal);
+        Vector3f currentPos = m_vVecState[i];
+        Vector3f currentVel = m_vVecState[i + 1];
+        Vector3f newPos = currentPos + timeStep * currentVel;
+        newPositionsCurrentVelocities.push_back(newPos);
+        newPositionsCurrentVelocities.push_back(currentVel);
     }
 
+    // Compute forces are updated positions
+    vector<Vectorf> deriv = evalF(newPositionsCurrentVelocities);
 
-    for (int i = 0; i < m_vVecState.size(); ++i)
+    // Update velocities using computed forces
+    vector<Vector3f> newPositionsNewVelocities = vector<Vector3f>();
+    for (int i = 0; i < m_vVecState.size(); i += 2)
     {
-        if (i % 2 == 0)
-        {
-            Vector3f prevPosition = m_vVecState[i];
-            Vector3f newPosition = prevPosition + vHalfStepBefore[i / 2] * timeStep;
-            newState.push_back(newPosition);
-        }
-
-        else
-        {
-            newState.push_back(viPlusHalf[i / 2]);
-        }
+        Vector3f newPos = m_vVecState[i];
+        Vector3f currentVel = m_vVecState[i + 1];
+        Vector3f accelFromUpdatedPositions = deriv[i + 1];
+        Vector3f newVel = currentVel + timeStep * accelFromUpdatedPositions;
+        newPositionsNewVelocities.push_back(newPos);
+        newPositionsNewVelocities.push_back(newVel);
     }
 
-    vHalfStepBefore = viPlusHalf;
-    this->setState(newState);
+    this->setState(newPositionsNewVelocities);
+    */
 }
 
 vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
@@ -475,17 +470,15 @@ void SPHFluidSystem::build2DTestSystem()
 
 void SPHFluidSystem::build2DTestSystem2()
 {
-    for (int k = 0; k < 10; +k)
+    float k = 0.2;
+    for (int i = 0; i < 20; ++i)
     {
-        for (int i = 0; i < 10; ++i)
+        for (int j = 0; j < 40; ++j)
         {
-            for (int j = 0; j < 10; ++j)
-            {
-                Vector3f point(0.03 * (i + 1), 0.03 * (j + 1), 0.03 + k * 0.03);
-                m_vVecState.push_back(point);
-                m_vVecState.push_back(Vector3f::ZERO);
+            Vector3f point(0.02 * (i + 1), 0.02 * (j + 1), k);
+            m_vVecState.push_back(point);
+            m_vVecState.push_back(Vector3f::ZERO);
 
-            }
         }
     }
     /*
@@ -515,6 +508,26 @@ void SPHFluidSystem::build3DTestSystem()
 
     m_numParticles = m_vVecState.size() / 2;
 }
+
+void SPHFluidSystem::build3DTestSystem2()
+{
+    for (int k = 0; k < 10; k++)
+    {
+        for (int i = 0; i < 10; i++ )
+        {
+            for (int j = 0; j < 30; j++) {
+                //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
+                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.05 + k * 0.03 );
+                m_vVecState.push_back(point);
+                m_vVecState.push_back(Vector3f::ZERO);
+            }
+        }
+    }
+
+    m_numParticles = m_vVecState.size() / 2;
+    GAS_CONSTANT = 2.0;
+}
+
 
 
 
