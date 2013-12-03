@@ -44,3 +44,4 @@ vecmath/src/Quat4f.cpp
 vecmath/src/Vector2f.cpp
 vecmath/src/Vector3f.cpp
 vecmath/src/Vector4f.cpp
+src/Utilities.cpp

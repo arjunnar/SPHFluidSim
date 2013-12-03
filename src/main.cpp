@@ -16,28 +16,10 @@
 
 using namespace std;
 
-// Globals here.
-
-// For 3D Test System 2
-/*
-float boxSizeX = 0.6;
-float boxSizeY = 1.2;
-float boxSizeZ = 0.6;
-*/
-
-// For 3D Test System 1
-/*
- float boxSizeX = 0.4;
- float boxSizeY = 0.4;
- float boxSizeZ = 0.4;
- */
-
-// For 2D Test System 1 and 2
-float boxSizeX = 0.8;
-float boxSizeY = 0.9;
-float boxSizeZ = 0.8;
-
-
+// Globals
+float boxSizeX;
+float boxSizeY;
+float boxSizeZ;
 float clothScale = 4.0;
 
 namespace
@@ -52,6 +34,8 @@ namespace
         LEAP_FROG
     };
 
+    FluidSystemType fluidSystemType;
+
     IntegratorType integratorType;
 
   void initSystem(int argc, char * argv[])
@@ -59,7 +43,42 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ);
+    fluidSystemType = FluidSystemType::SystemSimple3D;
+
+    switch (fluidSystemType)
+    {
+         case TwoDensitySystem2D:
+            boxSizeX = 1.0;
+            boxSizeY = 1.5;
+            boxSizeZ = 1.0;
+            break;
+
+         case TwoDensitySystem3D:
+
+            break;
+
+         case SystemSimple2D:
+         case SystemLarge2D:
+            boxSizeX = 0.8;
+            boxSizeY = 0.9;
+            boxSizeZ = 0.8;
+            break;
+
+         case SystemSimple3D:
+            boxSizeX = 0.4;
+            boxSizeY = 0.4;
+            boxSizeZ = 0.4;
+            break;
+
+         case SystemLarge3D:
+            boxSizeX = 0.45;
+            boxSizeY = 1.1;
+            boxSizeZ = 0.45;
+            break;
+
+    }
+
+    system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ, fluidSystemType);
 
     timeStepper = new LeapFrog();
 

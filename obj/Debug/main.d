@@ -6,7 +6,7 @@ obj/Debug/main.o: src/main.cpp src/extra.h vecmath/include/vecmath.h \
  src/particleSystem.h src/simpleSystem.h src/pendulumSystem.h \
  src/ClothSystem.h src/PhysicsUtilities.h src/GridTestSystem.h \
  src/ParticleGrid.h src/tuple.h src/kernelutilities.h \
- src/sphfluidsystem.h src/debugutilities.h
+ src/sphfluidsystem.h src/debugutilities.h src/Utilities.cpp
 
 src/extra.h:
 
@@ -51,3 +51,5 @@ src/kernelutilities.h:
 src/sphfluidsystem.h:
 
 src/debugutilities.h:
+
+src/Utilities.cpp:

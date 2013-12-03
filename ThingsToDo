@@ -1,17 +1,22 @@
 Things To Do: 
 
-1) Implement Leapfrog integration DONE
-2) More particles (Pretty much done)
-3) Explore rendering options (marching cubes or point splatting)
-4) Reset system
-5) Two sets of particles with different rest densities 
-6) Wall breaking
-7) Rotational force 
-8) Presentation stuff: 
+1) Explore rendering options (marching cubes or point splatting) (DO LAST)
+2) Wall breaking
+3) Emitters
+4) Presentation stuff: 
 
-- Examples to run 
+- Examples to run
+
+2D Large
+3D Large
+Two density system
+Rotation 3D system 
+
+Wall breaking 
+Emitters (potential) 
+ 
 - Slides (a few) 
 - Practice 
 
-9) Writeup
+5) Writeup
 
