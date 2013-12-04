@@ -37,12 +37,20 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ, F
             build3DTestSystemLarge();
             break;
 
+         case System2DEmitter:
+            m_numParticles = 0;
+            break;
+
     }
 
     Vector3f origin = Vector3f::ZERO;
     particleGrid = ParticleGrid(origin, boxSizeX , boxSizeY,  boxSizeZ);
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
+
+    locOfCannon = Vector3f(boxSizeX/4.0f, boxSizeY/4.0f, 0.2);
+    locOfCannon2 = Vector3f(boxSizeX * 3.0/4.0, boxSizeY/2.5f, 0.2);
+    locOfCannon3 = Vector3f(boxSizeX/2.0f, boxSizeY/4.5f, 0.2);
 }
 
 void SPHFluidSystem::initConstants()
@@ -63,44 +71,18 @@ void SPHFluidSystem::initConstants()
     // Other constants
     MIN_DENSITY = 700;
     MAX_DENSITY = 5000;
+
+
+    emitAngleIncrement = M_PI/12;
+    emitAngleIncrement2 = M_PI/24;
+    angleToEmit = emitAngleIncrement;
+    angleToEmit2 = emitAngleIncrement2;
+    emitVelocityConstant = 2.7f;
 }
 
 SPHFluidSystem::~SPHFluidSystem()
 {
 
-}
-
-void SPHFluidSystem::advanceState()
-{
-    /*
-    // Compute new positions using current velocity
-    vector<Vector3f> newPositionsCurrentVelocities = vector<Vector3f>();
-    for (int i = 0; i < m_vVecState.size(); i += 2)
-    {
-        Vector3f currentPos = m_vVecState[i];
-        Vector3f currentVel = m_vVecState[i + 1];
-        Vector3f newPos = currentPos + timeStep * currentVel;
-        newPositionsCurrentVelocities.push_back(newPos);
-        newPositionsCurrentVelocities.push_back(currentVel);
-    }
-
-    // Compute forces are updated positions
-    vector<Vectorf> deriv = evalF(newPositionsCurrentVelocities);
-
-    // Update velocities using computed forces
-    vector<Vector3f> newPositionsNewVelocities = vector<Vector3f>();
-    for (int i = 0; i < m_vVecState.size(); i += 2)
-    {
-        Vector3f newPos = m_vVecState[i];
-        Vector3f currentVel = m_vVecState[i + 1];
-        Vector3f accelFromUpdatedPositions = deriv[i + 1];
-        Vector3f newVel = currentVel + timeStep * accelFromUpdatedPositions;
-        newPositionsNewVelocities.push_back(newPos);
-        newPositionsNewVelocities.push_back(newVel);
-    }
-
-    this->setState(newPositionsNewVelocities);
-    */
 }
 
 vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
@@ -320,7 +302,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         Vector3f accelSurfaceTension = totalSurfaceTensionForce / densityAtParticleLoc;
         Vector3f accelGravity = PhysicsUtilities::getGravityForce(PARTICLE_MASS, GRAVITY_CONSTANT) / PARTICLE_MASS;
 
-        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension + 0.20s * rotForce / PARTICLE_MASS;
+        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension; //+ 0.20 * rotForce / PARTICLE_MASS;
 
         //cout << "Accel total: "; DebugUtilities::printVector3f(accelTotal);
 
@@ -344,8 +326,101 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
 
 }
 
+void SPHFluidSystem::drawFace(TRIANGLE face, bool reverse)
+{
+    //cout << "Trying to draw face " << endl;
+    mpVector pos1 = face.p[0];
+    mpVector pos2 = face.p[1];
+    mpVector pos3 = face.p[2];
+    mpVector normal1 = face.norm[0];
+    mpVector normal2 = face.norm[1];
+    mpVector normal3 = face.norm[2];
+
+    if (reverse)
+    {
+        pos1 = face.p[2];
+        pos3 = face.p[0];
+        normal1 = face.norm[2];
+        normal3 = face.norm[0];
+    }
+
+    glBegin(GL_TRIANGLES);
+
+    // First normal and first vertex
+    glNormal3d(normal1.x, normal1.y, normal1.z);
+    glVertex3d(pos1.x, pos1.y, pos1.z);
+
+    // Second normal and second vertex
+    glNormal3d(normal2.x, normal2.y, normal2.z);
+    glVertex3d(pos2.x, pos2.y, pos2.z);
+
+    // Third normal and third vertex
+    glNormal3d(normal3.x, normal3.y, normal3.z);
+    glVertex3d(pos3.x, pos3.y, pos3.z);
+
+    glEnd();
+}
+
+
+float SPHFluidSystem::calcDensity(Vector3f pos)
+{
+    float density = 0;
+
+    vector<int> neighborIndexes = particleGrid.getNeighborParticleIndexes(-1, pos);
+   // cout << "neighbor indexes size: " << neighborIndexes.size() << endl;
+    for (int neighborI : neighborIndexes)
+    {
+        Vector3f neighborPos = PhysicsUtilities::getPositionOfParticle(m_vVecState, neighborI);
+        density += PARTICLE_MASS * KernelUtilities::polySixKernel(pos - neighborPos);
+    }
+
+    density += SELF_DENSITY_CONSTANT;
+    return density;
+}
+
+
 void SPHFluidSystem::draw()
 {
+    /*
+    int numTrianglesCreated;
+
+    int nX = particleGrid.getSideLengthX() / 0.005;
+    int nY = particleGrid.getSideLengthY() / 0.005;
+    int nZ = particleGrid.getSideLengthZ() / 0.005;
+    float stepSize = 0.005;
+
+    mp4Vector *mcPoints = new mp4Vector[(nX+1)*(nY+1)*(nZ+1)];
+
+    for(int i=0; i < nX+1; i++)
+        for(int j=0; j < nY+1; j++)
+            for(int k=0; k < nZ+1; k++)
+            {
+                mp4Vector vert(i*stepSize, j*stepSize, k*stepSize, 0);
+                vert.val = calcDensity(Vector3f(vert.x, vert.y, vert.z));
+                //cout << vert.val << endl;
+                mcPoints[i*(nY+1)*(nZ+1) + j*(nZ+1) + k] = vert;
+            }
+
+    TRIANGLE* triangleMeshPointer = MarchingCubes(nX, nY, nZ, 1.0f, 1.0f, 1.0f, 1000, mcPoints, numTrianglesCreated);
+    //MarchingCubesCross(minX, maxX, minY, maxY, minZ, maxZ, numCellsInDimenX, numCellsInDimenY, numCellsInDimenZ, MIN_DENSITY, &calcDensity, numTrianglesCreated);
+
+    cout << "Num triangles created: " << numTrianglesCreated << endl;
+
+
+    GLfloat particleColor[] = { 0.0f, 0.0f, 1.0f, 1.0f, };
+    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+
+
+    for (int triangleI = 0; triangleI < numTrianglesCreated; ++triangleI)
+    {
+        TRIANGLE face = *triangleMeshPointer;
+        drawFace(face, false);
+        drawFace(face, true);
+        ++triangleMeshPointer;
+        //cout << "Drawing triangle num: " << triangleI + 1 << endl;
+    }
+    */
+
     for (int i = 0; i < m_numParticles; i++)
     {
         // Draw the particles
@@ -361,7 +436,7 @@ void SPHFluidSystem::draw()
         {
             glPushMatrix();
             glDisable(GL_LIGHTING);
-
+            glColor3f(0.0, 0.0, 1.0);
             if (i >= 200)
             {
                 //GLfloat particleColor[] = { 0.0, 1.0, 1.0, 1.0f};
@@ -384,6 +459,32 @@ void SPHFluidSystem::draw()
             glPopMatrix();
         }
 
+        else if (typeOfSystem == FluidSystemType::System2DEmitter)
+        {
+            glPushMatrix();
+            glDisable(GL_LIGHTING);
+            glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
+
+            if (i % 3 == 0)
+            {
+                glColor3f(0.0, 1.0f, 1.0f);
+            }
+
+            else if (i % 3 == 1)
+            {
+                glColor3f(0.0f, 1.0f, 0.0f);
+            }
+
+            else
+            {
+                glColor3f(1.0f, 0.0f, 127.0/255.0f);
+            }
+
+            glutSolidSphere(0.02, 10, 10);
+            glEnable(GL_LIGHTING);
+            glPopMatrix();
+        }
+
         else
         {
             glPushMatrix();
@@ -397,6 +498,7 @@ void SPHFluidSystem::draw()
         }
     }
 
+
     //cout << "Num nans: " << numNanPositions << endl;
 }
 
@@ -406,6 +508,7 @@ void SPHFluidSystem::reinitializeSystem()
 }
 
 // Helper functions
+
 void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
 {
     vecParticleDensities = vector<float>();
@@ -435,6 +538,7 @@ void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
 
         if ( typeOfSystem == FluidSystemType::TwoDensitySystem2D)
         {
+
             if (i >= 200 )
             {
                 REST_DENSITY = REST_DENSITY_SECOND;
@@ -635,6 +739,51 @@ void SPHFluidSystem::build2DTestSystemTwoDensities()
     m_numParticles = 400;
 }
 
+void SPHFluidSystem::emitParticle()
+{
+    float xVel = emitVelocityConstant * cos(angleToEmit);
+    float yVel = emitVelocityConstant * sin(angleToEmit);
 
+    float xVel2 = emitVelocityConstant * cos(angleToEmit2);
+    float yVel2 = emitVelocityConstant * sin(angleToEmit2);
+
+    m_vVecState.push_back(locOfCannon);
+    m_vVecState.push_back(Vector3f(xVel, yVel, 0.0f));
+
+    m_vVecState.push_back(locOfCannon2);
+    m_vVecState.push_back(Vector3f(-1.0 * xVel, yVel, 0.0f));
+
+    m_vVecState.push_back(locOfCannon3);
+    m_vVecState.push_back(Vector3f(xVel2, yVel2, 0.0f));
+
+    m_numParticles += 3;
+
+    angleToEmit += emitAngleIncrement;
+    angleToEmit2 += emitAngleIncrement2;
+
+    if (angleToEmit >= M_PI)
+    {
+        angleToEmit = M_PI - emitAngleIncrement;
+        emitAngleIncrement *= -1;
+    }
+
+    if (angleToEmit <= 0.0f)
+    {
+        emitAngleIncrement *= -1;
+        angleToEmit = emitAngleIncrement;
+    }
+
+    if (angleToEmit2 >= M_PI)
+    {
+        angleToEmit2 = M_PI - emitAngleIncrement2;
+        emitAngleIncrement2 *= -1;
+    }
+
+    if (angleToEmit2 <= 0.0f)
+    {
+        emitAngleIncrement2 *= -1;
+        angleToEmit2 = emitAngleIncrement2;
+    }
+}
 
 

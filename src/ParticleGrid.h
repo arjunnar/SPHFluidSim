@@ -25,12 +25,12 @@ public:
 	ParticleGrid();
     ParticleGrid(Vector3f origin, float sizeX, float sizeY, float sizeZ);
 	virtual ~ParticleGrid();
+
 	std::vector<int> getNeighborParticleIndexes(int ParticleIndex, Vector3f &particleLoc);
 	void initializeGrid(std::vector<Vector3f> &particleLocations);
-
-	// Made this public for testing purposes only
 	Tuple::tuple<int, 3> getGridCoordinates(Vector3f &particleLoc);
 
+    // Getters
     float getSideLengthX()
     {
         return sideLengthX;
@@ -44,6 +44,21 @@ public:
     float getSideLengthZ()
     {
         return sideLengthZ;
+    }
+
+    int getNumCellsX()
+    {
+        return numCellsPerDimenX;
+    }
+
+    int getNumCellsY()
+    {
+        return numCellsPerDimenY;
+    }
+
+    int getNumCellsZ()
+    {
+        return numCellsPerDimenZ;
     }
 
 private:

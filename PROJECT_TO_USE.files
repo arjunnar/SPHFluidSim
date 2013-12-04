@@ -45,3 +45,17 @@ vecmath/src/Vector2f.cpp
 vecmath/src/Vector3f.cpp
 vecmath/src/Vector4f.cpp
 src/Utilities.cpp
+src/kernelutilities.h
+src/GridTestSystem.h
+src/main.cpp
+src/kernelutilities.cpp
+src/MCTable.h
+src/mpVector.cpp
+src/mpVector.h
+src/MCTableNew.h
+src/MarchingCubes.h
+src/MarchingCubes.cpp
+src/MarchingCubesCross.cpp
+src/MarchingCubesCross.cpp
+src/MarchingCubes.h
+src/MarchingCubesCross.h

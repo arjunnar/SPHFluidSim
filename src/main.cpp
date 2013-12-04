@@ -21,6 +21,8 @@ float boxSizeX;
 float boxSizeY;
 float boxSizeZ;
 float clothScale = 4.0;
+int numIters = 0;
+int numItersPerEmit = 1;
 
 namespace
 {
@@ -43,7 +45,7 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    fluidSystemType = FluidSystemType::SystemSimple3D;
+    fluidSystemType = FluidSystemType::System2DEmitter;
 
     switch (fluidSystemType)
     {
@@ -51,10 +53,6 @@ namespace
             boxSizeX = 1.0;
             boxSizeY = 1.5;
             boxSizeZ = 1.0;
-            break;
-
-         case TwoDensitySystem3D:
-
             break;
 
          case SystemSimple2D:
@@ -76,6 +74,12 @@ namespace
             boxSizeZ = 0.45;
             break;
 
+         case System2DEmitter:
+            boxSizeX = 1.1;
+            boxSizeY = 1.1;
+            boxSizeZ = 0.3;
+            break;
+glColor3f(0.0, 0.0, 1.0);
     }
 
     system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ, fluidSystemType);
@@ -114,7 +118,14 @@ namespace
   {
      if(timeStepper!=0)
      {
-          timeStepper->takeStep(system,stepSize);
+         if (numIters % numItersPerEmit == 0)
+         {
+            system->emitParticle();
+            numIters = 0;
+         }
+
+         timeStepper->takeStep(system,stepSize);
+         numIters++;
      }
 
       //system->advanceState();

@@ -69,12 +69,16 @@ endif
 
 OBJECTS := \
 	$(OBJDIR)/main.o \
+	$(OBJDIR)/Utilities.o \
 	$(OBJDIR)/debugutilities.o \
 	$(OBJDIR)/camera.o \
+	$(OBJDIR)/MarchingCubesCross.o \
 	$(OBJDIR)/kernelutilities.o \
 	$(OBJDIR)/ParticleGrid.o \
 	$(OBJDIR)/particleSystem.o \
 	$(OBJDIR)/sphfluidsystem.o \
+	$(OBJDIR)/mpVector.o \
+	$(OBJDIR)/MarchingCubes.o \
 	$(OBJDIR)/TimeStepper.o \
 	$(OBJDIR)/PhysicsUtilities.o \
 	$(OBJDIR)/GridTestSystem.o \
@@ -144,10 +148,16 @@ endif
 $(OBJDIR)/main.o: src/main.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/Utilities.o: src/Utilities.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/debugutilities.o: src/debugutilities.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/camera.o: src/camera.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/MarchingCubesCross.o: src/MarchingCubesCross.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/kernelutilities.o: src/kernelutilities.cpp
@@ -160,6 +170,12 @@ $(OBJDIR)/particleSystem.o: src/particleSystem.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/sphfluidsystem.o: src/sphfluidsystem.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/mpVector.o: src/mpVector.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/MarchingCubes.o: src/MarchingCubes.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/TimeStepper.o: src/TimeStepper.cpp

@@ -10,6 +10,8 @@
 #include "debugutilities.h"
 #include "assert.h"
 #include "Utilities.cpp"
+#include "MarchingCubes.h"
+#include "mpVector.h"
 
 using namespace std;
 
@@ -25,6 +27,7 @@ class SPHFluidSystem : public ParticleSystem
         void draw();
         void reinitializeSystem();
         void advanceState();
+        void emitParticle();
 
    private:
         // Instance variables
@@ -54,10 +57,12 @@ class SPHFluidSystem : public ParticleSystem
 
         // Helper functions
         void calculateDensitiesAndPressures(vector<Vector3f> &state);
+        float calcDensity(Vector3f pos);
         void initConstants();
         bool isNan(float val);
         bool isNan(Vector3f vec);
         Vector3f getParticleColor(float densityAtParticleLoc);
+        void drawFace(TRIANGLE face, bool reverse);
 
         // 2D system initializations
         void build2DTestSystemSimple();
@@ -67,6 +72,17 @@ class SPHFluidSystem : public ParticleSystem
         // 3D system initializations
         void build3DTestSystemSimple();
         void build3DTestSystemLarge();
+
+        // For emitting particles
+        float angleToEmit;
+        float angleToEmit2;
+        float emitAngleIncrement;
+        float emitAngleIncrement2;
+        float emitVelocityConstant;
+        Vector3f locOfCannon;
+        Vector3f locOfCannon2;
+        Vector3f locOfCannon3;
+
 
         // Not really used anymore
         void buildTwoParticleSystemNeighbors();

@@ -5,6 +5,7 @@ obj/Release/sphfluidsystem.o: src/sphfluidsystem.cpp src/sphfluidsystem.h \
  vecmath/include/Vector2f.h vecmath/include/Vector3f.h \
  vecmath/include/Vector4f.h src/ParticleGrid.h src/tuple.h \
  src/kernelutilities.h src/extra.h src/debugutilities.h src/Utilities.cpp \
+ src/MarchingCubes.h src/mpVector.h src/MCTableNew.h \
  src/PhysicsUtilities.h
 
 src/sphfluidsystem.h:
@@ -38,5 +39,11 @@ src/extra.h:
 src/debugutilities.h:
 
 src/Utilities.cpp:
+
+src/MarchingCubes.h:
+
+src/mpVector.h:
+
+src/MCTableNew.h:
 
 src/PhysicsUtilities.h:
