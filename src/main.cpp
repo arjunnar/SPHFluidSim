@@ -75,8 +75,8 @@ namespace
             break;
 
          case System2DEmitter:
-            boxSizeX = 1.1;
-            boxSizeY = 1.1;
+            boxSizeX = 1.3;
+            boxSizeY = 1.6;
             boxSizeZ = 0.3;
             break;
 glColor3f(0.0, 0.0, 1.0);

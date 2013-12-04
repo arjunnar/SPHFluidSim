@@ -48,9 +48,9 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ, F
     vecParticleDensities = vector<float>();
     vecParticlePressures = vector<float>();
 
-    locOfCannon = Vector3f(boxSizeX/4.0f, boxSizeY/4.0f, 0.2);
-    locOfCannon2 = Vector3f(boxSizeX * 3.0/4.0, boxSizeY/2.5f, 0.2);
-    locOfCannon3 = Vector3f(boxSizeX/2.0f, boxSizeY/4.5f, 0.2);
+    locOfCannon = Vector3f(boxSizeX/5.0f, boxSizeY/2.5f, 0.2);
+    locOfCannon2 = Vector3f(boxSizeX * 4.0/5.0, boxSizeY/1.9f, 0.2);
+    locOfCannon3 = Vector3f(boxSizeX * 2.5 /5.0f, boxSizeY/3.5f, 0.2);
 }
 
 void SPHFluidSystem::initConstants()
