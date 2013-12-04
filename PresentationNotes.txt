@@ -1,0 +1,14 @@
+Before all this, make the floor/background look better if possible.
+
+1) 2D Large Dam Break 
+- Two rendering modes, first particles and then marching cubes (< 25 seconds)
+2) 3D Simple and Rotation ( < 25 seconds)
+- Show it drop, then show slow rotation and amp the rotation speed
+- Start with particles and then switch to marching cubes (we will press marching cubes mid-way through the slow rotation) 
+3) Particle Emitters ( < 15 seconds)
+-Just show it for fun 
+4) Two density ( < 15 seconds)
+5) 3D Large (with a wider tank) and then a spherical droplet going in. 
+- Only render with particles. ( 35 seconds )
+- Actually, if there's time, try marching cubes
+

@@ -45,7 +45,7 @@ namespace
     // Seed the random number generator with the current time
     srand( time( NULL ) );
 
-    fluidSystemType = FluidSystemType::System2DEmitter;
+    fluidSystemType = FluidSystemType::SystemLarge3D;
 
     switch (fluidSystemType)
     {
@@ -79,7 +79,6 @@ namespace
             boxSizeY = 1.6;
             boxSizeZ = 0.3;
             break;
-glColor3f(0.0, 0.0, 1.0);
     }
 
     system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ, fluidSystemType);
@@ -116,19 +115,26 @@ glColor3f(0.0, 0.0, 1.0);
 
   void stepSystem()
   {
-     if(timeStepper!=0)
+     if (fluidSystemType == FluidSystemType::System2DEmitter)
      {
-         if (numIters % numItersPerEmit == 0)
-         {
+        if (numIters % numItersPerEmit == 0)
+        {
             system->emitParticle();
             numIters = 0;
-         }
+        }
 
-         timeStepper->takeStep(system,stepSize);
-         numIters++;
+        else
+        {
+            ++numIters;
+        }
+
+        timeStepper->takeStep(system, stepSize);
      }
 
-      //system->advanceState();
+     else
+     {
+        timeStepper->takeStep(system,stepSize);
+     }
 
       vector<Vector3f> state = system->getState();
       for (vector<Vector3f>::iterator iter = state.begin(); iter != state.end(); iter += 2)

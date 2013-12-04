@@ -302,7 +302,7 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         Vector3f accelSurfaceTension = totalSurfaceTensionForce / densityAtParticleLoc;
         Vector3f accelGravity = PhysicsUtilities::getGravityForce(PARTICLE_MASS, GRAVITY_CONSTANT) / PARTICLE_MASS;
 
-        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension; //+ 0.20 * rotForce / PARTICLE_MASS;
+        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension; //+ 0.35 * rotForce / PARTICLE_MASS;
 
         //cout << "Accel total: "; DebugUtilities::printVector3f(accelTotal);
 
@@ -384,10 +384,10 @@ void SPHFluidSystem::draw()
     /*
     int numTrianglesCreated;
 
-    int nX = particleGrid.getSideLengthX() / 0.005;
-    int nY = particleGrid.getSideLengthY() / 0.005;
-    int nZ = particleGrid.getSideLengthZ() / 0.005;
-    float stepSize = 0.005;
+    int nX = particleGrid.getSideLengthX() / 0.01;
+    int nY = particleGrid.getSideLengthY() / 0.01;
+    int nZ = particleGrid.getSideLengthZ() / 0.01;
+    float stepSize = 0.01;
 
     mp4Vector *mcPoints = new mp4Vector[(nX+1)*(nY+1)*(nZ+1)];
 
@@ -407,7 +407,7 @@ void SPHFluidSystem::draw()
     cout << "Num triangles created: " << numTrianglesCreated << endl;
 
 
-    GLfloat particleColor[] = { 0.0f, 0.0f, 1.0f, 1.0f, };
+    GLfloat particleColor[] = { 0.0f, 1.0f, 1.0f, 1.0f, };
     glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
 
 
@@ -498,7 +498,6 @@ void SPHFluidSystem::draw()
         }
     }
 
-
     //cout << "Num nans: " << numNanPositions << endl;
 }
 
@@ -588,6 +587,7 @@ void SPHFluidSystem::buildTwoParticleSystemNotNeighbors()
     m_vVecState.push_back(pos1);
     m_vVecState.push_back(Vector3f::ZERO);
     m_vVecState.push_back(pos2);
+
     m_vVecState.push_back(Vector3f::ZERO);
 
     m_numParticles = 2;
