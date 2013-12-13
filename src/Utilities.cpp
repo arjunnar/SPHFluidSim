@@ -7,6 +7,9 @@ enum FluidSystemType
 
     SystemSimple3D,
     SystemLarge3D,
-    TwoDensitySystem3D
+    TwoDensitySystem3D,
+    SystemDroplet3D,
 
+    System3DWaves
 };
+

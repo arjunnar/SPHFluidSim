@@ -82,9 +82,6 @@ OBJECTS := \
 	$(OBJDIR)/TimeStepper.o \
 	$(OBJDIR)/PhysicsUtilities.o \
 	$(OBJDIR)/GridTestSystem.o \
-	$(OBJDIR)/pendulumSystem.o \
-	$(OBJDIR)/simpleSystem.o \
-	$(OBJDIR)/ClothSystem.o \
 
 RESOURCES := \
 
@@ -185,15 +182,6 @@ $(OBJDIR)/PhysicsUtilities.o: src/PhysicsUtilities.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/GridTestSystem.o: src/GridTestSystem.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/pendulumSystem.o: src/pendulumSystem.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/simpleSystem.o: src/simpleSystem.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/ClothSystem.o: src/ClothSystem.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

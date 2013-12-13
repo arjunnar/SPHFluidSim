@@ -8,8 +8,6 @@
 #include "camera.h"
 
 #include "TimeStepper.h"
-#include "simpleSystem.h"
-#include "pendulumSystem.h"
 #include "ClothSystem.h"
 #include "GridTestSystem.h"
 #include "sphfluidsystem.h"
@@ -52,14 +50,14 @@ namespace
          case TwoDensitySystem2D:
             boxSizeX = 1.0;
             boxSizeY = 1.5;
-            boxSizeZ = 1.0;
+            boxSizeZ = 0.3;
             break;
 
          case SystemSimple2D:
          case SystemLarge2D:
-            boxSizeX = 0.8;
+            boxSizeX = 1.2;
             boxSizeY = 0.9;
-            boxSizeZ = 0.8;
+            boxSizeZ = 0.3;
             break;
 
          case SystemSimple3D:
@@ -69,25 +67,38 @@ namespace
             break;
 
          case SystemLarge3D:
-            boxSizeX = 0.45;
-            boxSizeY = 1.1;
-            boxSizeZ = 0.45;
+            boxSizeX = 0.6;
+            boxSizeY = 1.3;
+            boxSizeZ = 0.6;
             break;
 
          case System2DEmitter:
-            boxSizeX = 1.3;
+            boxSizeX = 1.2;
             boxSizeY = 1.6;
-            boxSizeZ = 0.3;
+            boxSizeZ = 0.2;
             break;
+
+         case SystemDroplet3D:
+            boxSizeX = 0.7;
+            boxSizeY = 1.3;
+            boxSizeZ = 0.6;
+            break;
+
+         case System3DWaves:
+            boxSizeX = 1.2;
+            boxSizeY = 0.60;
+            boxSizeZ = 0.60;
+            break;
+
     }
 
     system = new SPHFluidSystem(boxSizeX, boxSizeY, boxSizeZ, fluidSystemType);
 
-    timeStepper = new LeapFrog();
+    timeStepper = new ForwardEuler;
 
-    integratorType = IntegratorType::LEAP_FROG;
+    integratorType = IntegratorType::FORWARD_EULER;
 
-    stepSize = 0.005;
+    stepSize = 0.010;
   }
 
   bool fixCoord(float &coord, float &vel, float boxSize)
@@ -230,13 +241,14 @@ namespace
     glPopMatrix();
 
     // Draw the floor
+    /*
     glPushMatrix();
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, floorColor);
     glTranslatef(boxSizeX/2.0f, -0.1f, boxSizeZ/2.0f);
     glScaled(clothScale, 0.02f, clothScale);
     glutSolidCube(1);
     glPopMatrix();
-
+    */
 }
         
 
@@ -279,9 +291,38 @@ namespace
                 break;
             }
 
-            case 'r':
+            case 'q':
             {
                 system->reinitializeSystem();
+                break;
+            }
+
+            case 'r':
+            {
+                system->toggleRotation();
+                break;
+            }
+
+            case 't':
+            {
+                system->moveToFasterRotSpeed();
+                break;
+            }
+
+            case 'm':
+            {
+                system->toggleMarchingCubes();
+                break;
+            }
+
+            case 'a':
+            {
+                system->setMovingHorizontally(false);
+                break;
+            }
+            case 'd':
+            {
+                system->setMovingHorizontally(true);
                 break;
             }
 
@@ -464,11 +505,11 @@ int main( int argc, char* argv[] )
 
     // Initial parameters for window position and size
     glutInitWindowPosition( 60, 60 );
-    glutInitWindowSize( 1000, 1000 );
+    glutInitWindowSize( 1600, 1200 );
     
     camera.SetDimensions( 1000, 1000 );
 
-    camera.SetDistance( 3.0 );
+    camera.SetDistance( 2.0 );
     camera.SetCenter(Vector3f::ZERO);
     
     glutCreateWindow("Smoothed Particle Hydrodynamics Fluid Simulation");

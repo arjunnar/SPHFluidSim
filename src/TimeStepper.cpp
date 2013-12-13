@@ -56,7 +56,7 @@ void LeapFrog::takeStep(ParticleSystem *particleSystem, float stepSize)
         newPositionsCurrentVelocities.push_back(currentVel);
     }
 
-    // Compute forces are updated positions
+    // Compute forces at updated positions
     vector<Vector3f> deriv = particleSystem->evalF(newPositionsCurrentVelocities);
 
     // Update velocities using computed forces

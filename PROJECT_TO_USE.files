@@ -4,8 +4,6 @@ include/GL/freeglut_std.h
 include/GL/glut.h
 src/camera.cpp
 src/camera.h
-src/ClothSystem.cpp
-src/ClothSystem.h
 src/debugutilities.cpp
 src/debugutilities.h
 src/extra.h
@@ -18,12 +16,8 @@ src/ParticleGrid.cpp
 src/ParticleGrid.h
 src/particleSystem.cpp
 src/particleSystem.h
-src/pendulumSystem.cpp
-src/pendulumSystem.h
 src/PhysicsUtilities.cpp
 src/PhysicsUtilities.h
-src/simpleSystem.cpp
-src/simpleSystem.h
 src/sphfluidsystem.cpp
 src/sphfluidsystem.h
 src/TimeStepper.cpp

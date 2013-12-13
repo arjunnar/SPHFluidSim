@@ -14,6 +14,7 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ, F
     initConstants();
 
     typeOfSystem = fluidSystemType;
+    m_numParticles = 0;
 
     switch (typeOfSystem)
     {
@@ -41,6 +42,14 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ, F
             m_numParticles = 0;
             break;
 
+         case SystemDroplet3D:
+            m_numParticles = 0;
+            addSphereOfParticles(Vector3f(0.35, 0.7, 0.35), 0.2);
+            break;
+
+         case System3DWaves:
+            build3DWaveSystem();
+            break;
     }
 
     Vector3f origin = Vector3f::ZERO;
@@ -51,6 +60,10 @@ SPHFluidSystem::SPHFluidSystem(float boxSizeX, float boxSizeY, float boxSizeZ, F
     locOfCannon = Vector3f(boxSizeX/5.0f, boxSizeY/2.5f, 0.2);
     locOfCannon2 = Vector3f(boxSizeX * 4.0/5.0, boxSizeY/1.9f, 0.2);
     locOfCannon3 = Vector3f(boxSizeX * 2.5 /5.0f, boxSizeY/3.5f, 0.2);
+    directionOfGravity = Vector3f(0.0f, -1.0f, 0.0f);
+
+    renderWithMarchingCubes = false;
+    rotEnabled = false;
 }
 
 void SPHFluidSystem::initConstants()
@@ -300,9 +313,14 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
         Vector3f accelPressure = totalPressureForce / densityAtParticleLoc;
         Vector3f accelViscosity = totalViscosityForce / densityAtParticleLoc;
         Vector3f accelSurfaceTension = totalSurfaceTensionForce / densityAtParticleLoc;
-        Vector3f accelGravity = PhysicsUtilities::getGravityForce(PARTICLE_MASS, GRAVITY_CONSTANT) / PARTICLE_MASS;
+        Vector3f accelGravity = GRAVITY_CONSTANT * directionOfGravity;
 
-        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension; //+ 0.35 * rotForce / PARTICLE_MASS;
+        Vector3f accelTotal = accelPressure + accelViscosity + accelGravity + accelSurfaceTension;
+
+        if (rotEnabled)
+        {
+            accelTotal += rotSpeed * rotForce / PARTICLE_MASS;
+        }
 
         //cout << "Accel total: "; DebugUtilities::printVector3f(accelTotal);
 
@@ -320,11 +338,28 @@ vector<Vector3f> SPHFluidSystem::evalF(vector<Vector3f> state)
     }
 
     return deriv;
-*/
+    */
+
     return derivative;
+}/*
+void SPHFluidSystem::build3DTestSystem()
+{
+    for (int k = 0; k < 10; k++)
+    {
+        for (int i = 0; i < 10; i++ )
+        {
+            for (int j = 0; j < 10; j++) {
+                //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
+                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.1 + k * 0.03 );
+                m_vVecState.push_back(point);
+                m_vVecState.push_back(Vector3f::ZERO);
+            }
+        }
+    }
 
-
+    m_numParticles = 1000;
 }
+*/
 
 void SPHFluidSystem::drawFace(TRIANGLE face, bool reverse)
 {
@@ -361,6 +396,19 @@ void SPHFluidSystem::drawFace(TRIANGLE face, bool reverse)
     glEnd();
 }
 
+void SPHFluidSystem::setMovingHorizontally(bool right)
+{
+    /*
+    Vector3f velocity = right ? Vector3f(3.0, 0.0, 0.0) : Vector3f(-3.0, 0.0, 0.0);
+    for (int particleIndex = 0; particleIndex < m_numParticles; ++particleIndex)
+    {
+        PhysicsUtilities::setVelocityOfParticle(m_vVecState, particleIndex, velocity);
+    }
+    */
+
+    directionOfGravity = Vector3f(-1.0, -1.0, 0);
+}
+
 
 float SPHFluidSystem::calcDensity(Vector3f pos)
 {
@@ -379,126 +427,131 @@ float SPHFluidSystem::calcDensity(Vector3f pos)
 }
 
 
+
+
 void SPHFluidSystem::draw()
 {
-    /*
-    int numTrianglesCreated;
-
-    int nX = particleGrid.getSideLengthX() / 0.01;
-    int nY = particleGrid.getSideLengthY() / 0.01;
-    int nZ = particleGrid.getSideLengthZ() / 0.01;
-    float stepSize = 0.01;
-
-    mp4Vector *mcPoints = new mp4Vector[(nX+1)*(nY+1)*(nZ+1)];
-
-    for(int i=0; i < nX+1; i++)
-        for(int j=0; j < nY+1; j++)
-            for(int k=0; k < nZ+1; k++)
-            {
-                mp4Vector vert(i*stepSize, j*stepSize, k*stepSize, 0);
-                vert.val = calcDensity(Vector3f(vert.x, vert.y, vert.z));
-                //cout << vert.val << endl;
-                mcPoints[i*(nY+1)*(nZ+1) + j*(nZ+1) + k] = vert;
-            }
-
-    TRIANGLE* triangleMeshPointer = MarchingCubes(nX, nY, nZ, 1.0f, 1.0f, 1.0f, 1000, mcPoints, numTrianglesCreated);
-    //MarchingCubesCross(minX, maxX, minY, maxY, minZ, maxZ, numCellsInDimenX, numCellsInDimenY, numCellsInDimenZ, MIN_DENSITY, &calcDensity, numTrianglesCreated);
-
-    cout << "Num triangles created: " << numTrianglesCreated << endl;
-
-
-    GLfloat particleColor[] = { 0.0f, 1.0f, 1.0f, 1.0f, };
-    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
-
-
-    for (int triangleI = 0; triangleI < numTrianglesCreated; ++triangleI)
+    if (renderWithMarchingCubes)
     {
-        TRIANGLE face = *triangleMeshPointer;
-        drawFace(face, false);
-        drawFace(face, true);
-        ++triangleMeshPointer;
-        //cout << "Drawing triangle num: " << triangleI + 1 << endl;
+        int numTrianglesCreated;
+
+        int nX = particleGrid.getSideLengthX() / 0.01;
+        int nY = particleGrid.getSideLengthY() / 0.01;
+        int nZ = particleGrid.getSideLengthZ() / 0.01;
+        float stepSize = 0.01;
+
+        mp4Vector *mcPoints = new mp4Vector[(nX+1)*(nY+1)*(nZ+1)];
+
+        for(int i=0; i < nX+1; i++)
+            for(int j=0; j < nY+1; j++)
+                for(int k=0; k < nZ+1; k++)
+                {
+                    mp4Vector vert(i*stepSize, j*stepSize, k*stepSize, 0);
+                    vert.val = calcDensity(Vector3f(vert.x, vert.y, vert.z));
+                    //cout << vert.val << endl;
+                    mcPoints[i*(nY+1)*(nZ+1) + j*(nZ+1) + k] = vert;
+                }
+
+        TRIANGLE* triangleMeshPointer = MarchingCubes(nX, nY, nZ, 1.0f, 1.0f, 1.0f, 1000, mcPoints, numTrianglesCreated);
+        //MarchingCubesCross(minX, maxX, minY, maxY, minZ, maxZ, numCellsInDimenX, numCellsInDimenY, numCellsInDimenZ, MIN_DENSITY, &calcDensity, numTrianglesCreated);
+
+        //cout << "Num triangles created: " << numTrianglesCreated << endl;
+
+
+        GLfloat particleColor[] = { 0.0f, 1.0f, 1.0f, 1.0f, };
+        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+
+
+        for (int triangleI = 0; triangleI < numTrianglesCreated; ++triangleI)
+        {
+            TRIANGLE face = *triangleMeshPointer;
+            drawFace(face, false);
+            drawFace(face, true);
+            ++triangleMeshPointer;
+            //cout << "Drawing triangle num: " << triangleI + 1 << endl;
+        }
     }
-    */
+
+    else
+    {
 
     for (int i = 0; i < m_numParticles; i++)
-    {
-        // Draw the particles
-        Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
-
-        if (isNan(posParticle))
         {
-            cout << "Encountered NAN position for particle: " << i; DebugUtilities::printVector3f(posParticle);
-        }
+            // Draw the particles
+            Vector3f posParticle = PhysicsUtilities::getPositionOfParticle(m_vVecState, i);
 
-
-        if (typeOfSystem == FluidSystemType::TwoDensitySystem2D)
-        {
-            glPushMatrix();
-            glDisable(GL_LIGHTING);
-            glColor3f(0.0, 0.0, 1.0);
-            if (i >= 200)
+            if (isNan(posParticle))
             {
-                //GLfloat particleColor[] = { 0.0, 1.0, 1.0, 1.0f};
-                //glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
-                glColor3f(1.0f, 1.0f, 0.0f);
+                cout << "Encountered NAN position for particle: " << i; DebugUtilities::printVector3f(posParticle);
             }
 
-            else
-            {
 
-                //GLfloat particleColor[] = { 0.0, 0.0, 1.0, 1.0f};
-                //glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+            if (typeOfSystem == FluidSystemType::TwoDensitySystem2D)
+            {
+                glPushMatrix();
+                glDisable(GL_LIGHTING);
                 glColor3f(0.0, 0.0, 1.0);
+                if (i >= 200)
+                {
+                    //GLfloat particleColor[] = { 0.0, 1.0, 1.0, 1.0f};
+                    //glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+                    glColor3f(1.0f, 1.0f, 0.0f);
+                }
+
+                else
+                {
+
+                    //GLfloat particleColor[] = { 0.0, 0.0, 1.0, 1.0f};
+                    //glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+                    glColor3f(0.0, 0.0, 1.0);
+                }
+
+
+                glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
+                glutSolidSphere(0.02, 10, 10);
+                glEnable(GL_LIGHTING);
+                glPopMatrix();
             }
 
-
-            glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-            glutSolidSphere(0.02, 10, 10);
-            glEnable(GL_LIGHTING);
-            glPopMatrix();
-        }
-
-        else if (typeOfSystem == FluidSystemType::System2DEmitter)
-        {
-            glPushMatrix();
-            glDisable(GL_LIGHTING);
-            glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-
-            if (i % 3 == 0)
+            else if (typeOfSystem == FluidSystemType::System2DEmitter)
             {
-                glColor3f(0.0, 1.0f, 1.0f);
-            }
+                glPushMatrix();
+                glDisable(GL_LIGHTING);
+                glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
 
-            else if (i % 3 == 1)
-            {
-                glColor3f(0.0f, 1.0f, 0.0f);
+                if (i % 3 == 0)
+                {
+                    glColor3f(0.0, 1.0f, 1.0f);
+                }
+
+                else if (i % 3 == 1)
+                {
+                    glColor3f(0.0f, 1.0f, 0.0f);
+                }
+
+                else
+                {
+                    glColor3f(1.0f, 0.0f, 127.0/255.0f);
+                }
+
+                glutSolidSphere(0.02, 10, 10);
+                glEnable(GL_LIGHTING);
+                glPopMatrix();
             }
 
             else
             {
-                glColor3f(1.0f, 0.0f, 127.0/255.0f);
+                glPushMatrix();
+                Vector3f colorParticle = getParticleColor(vecParticleDensities[i]);
+                GLfloat particleColor[] = { colorParticle.x(), colorParticle.y(), colorParticle.z(), 1.0f};
+                glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
+
+                glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
+                glutSolidSphere(0.02, 10, 10);
+                glPopMatrix();
             }
-
-            glutSolidSphere(0.02, 10, 10);
-            glEnable(GL_LIGHTING);
-            glPopMatrix();
-        }
-
-        else
-        {
-            glPushMatrix();
-            Vector3f colorParticle = getParticleColor(vecParticleDensities[i]);
-            GLfloat particleColor[] = { colorParticle.x(), colorParticle.y(), colorParticle.z(), 1.0f};
-            glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, particleColor );
-
-            glTranslatef(posParticle[0], posParticle[1], posParticle[2] );
-            glutSolidSphere(0.02, 10, 10);
-            glPopMatrix();
         }
     }
-
-    //cout << "Num nans: " << numNanPositions << endl;
 }
 
 void SPHFluidSystem::reinitializeSystem()
@@ -507,7 +560,6 @@ void SPHFluidSystem::reinitializeSystem()
 }
 
 // Helper functions
-
 void SPHFluidSystem::calculateDensitiesAndPressures(vector<Vector3f> &state)
 {
     vecParticleDensities = vector<float>();
@@ -564,8 +616,6 @@ Vector3f SPHFluidSystem::getParticleColor(float densityAtParticleLoc)
 
     float percentIntoInterval = (densityAtParticleLoc - MIN_DENSITY) / (MAX_DENSITY - MIN_DENSITY);
     return Vector3f(percentIntoInterval, 0.0f,  1 - percentIntoInterval);
-
-
 }
 
 bool SPHFluidSystem::isNan(float val)
@@ -606,26 +656,6 @@ void SPHFluidSystem::buildTwoParticleSystemNeighbors()
     m_numParticles = 2;
 }
 
-/*
-void SPHFluidSystem::build3DTestSystem()
-{
-    for (int k = 0; k < 10; k++)
-    {
-        for (int i = 0; i < 10; i++ )
-        {
-            for (int j = 0; j < 10; j++) {
-                //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
-                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.1 + k * 0.03 );
-                m_vVecState.push_back(point);
-                m_vVecState.push_back(Vector3f::ZERO);
-            }
-        }
-    }
-
-    m_numParticles = 1000;
-}
-*/
-
 void SPHFluidSystem::build2DTestSystemSimple()
 {
     float k = 0.2;
@@ -641,7 +671,6 @@ void SPHFluidSystem::build2DTestSystemSimple()
     }
 
     m_numParticles = 400;
-
 }
 
 void SPHFluidSystem::build2DTestSystemLarge()
@@ -657,13 +686,7 @@ void SPHFluidSystem::build2DTestSystemLarge()
 
         }
     }
-    /*
-    TENSION_CONSTANT = 0.1;
-    TENSION_THRESHOLD = 6.0;
-    GAS_CONSTANT = 2.0;
-    VISCOSITY_CONSTANT = 2.6;
-    REST_DENSITY = 300;
-    */
+
     m_numParticles = 1000;
 }
 
@@ -687,13 +710,13 @@ void SPHFluidSystem::build3DTestSystemSimple()
 
 void SPHFluidSystem::build3DTestSystemLarge()
 {
-    for (int k = 0; k < 10; k++)
+    for (int k = 0; k < 15; k++)
     {
-        for (int i = 0; i < 10; i++ )
+        for (int i = 0; i < 15; i++ )
         {
-            for (int j = 0; j < 30; j++) {
+            for (int j = 0; j < 40; j++) {
                 //Vector3f point(0.05 + .02 * i + .005 * (), 0.24 + j * .01 +  .005 * (j %2), 0.1 +  k * .01 + .005 * (k %2));
-                Vector3f point(0.05 + 0.03 * i, 0.05 + 0.03 * j, 0.05 + k * 0.03 );
+                Vector3f point(0.075 + 0.03 * i, 0.10 + 0.03 * j, 0.075 + k * 0.03 );
                 m_vVecState.push_back(point);
                 m_vVecState.push_back(Vector3f::ZERO);
             }
@@ -701,7 +724,6 @@ void SPHFluidSystem::build3DTestSystemLarge()
     }
 
     m_numParticles = m_vVecState.size() / 2;
-    GAS_CONSTANT = 2.0;
 }
 
 void SPHFluidSystem::build2DTestSystemTwoDensities()
@@ -728,15 +750,70 @@ void SPHFluidSystem::build2DTestSystemTwoDensities()
 
         }
     }
-    /*
-    TENSION_CONSTANT = 0.1;
-    TENSION_THRESHOLD = 6.0;
-    GAS_CONSTANT = 2.0;
-    VISCOSITY_CONSTANT = 2.6;
-    REST_DENSITY = 300;
-    */
 
     m_numParticles = 400;
+}
+
+void SPHFluidSystem::build3DWaveSystem()
+{
+    for (int k = 0; k < 10; k++)
+    {
+        for (int i = 0; i < 39; i++ )
+        {
+            for (int j = 0; j < 9; j++) {
+                Vector3f point(0.02 + 0.03 * i, 0.1 + 0.03 * j, 0.10 + k * 0.03 );
+                m_vVecState.push_back(point);
+                m_vVecState.push_back(Vector3f::ZERO);
+            }
+        }
+    }
+
+    m_numParticles = m_vVecState.size() / 2;
+}
+
+void SPHFluidSystem::addCircleOfParticles(Vector3f origin, float stepSize, float radius)
+{
+    float angle = 0.0f;
+
+    while (angle <= 2 * M_PI)
+    {
+        float x = radius * cos(angle) + origin.x();
+        float z = radius * sin(angle) + origin.z();
+        m_vVecState.push_back(Vector3f(x, origin.y(), z));
+        m_vVecState.push_back(Vector3f::ZERO);
+        ++m_numParticles;
+        angle += stepSize;
+    }
+}
+
+void SPHFluidSystem::addDiskOfParticles(Vector3f origin, float radiusOfDisk)
+{
+    float stepSize = 0.05;
+
+    m_vVecState.push_back(Vector3f(origin.x(), origin.y(), origin.z()));
+    m_vVecState.push_back(Vector3f::ZERO);
+    ++m_numParticles;
+
+    float angularStep = M_PI/10;
+    for (float radius = stepSize; radius <= radiusOfDisk; radius += stepSize)
+    {
+        addCircleOfParticles(origin, angularStep, radius);
+    }
+}
+
+void SPHFluidSystem::addSphereOfParticles(Vector3f origin, float radiusOfSphere)
+{
+    float yStep = 0.05;
+    for (float yDist = -1.0 * radiusOfSphere; yDist <= radiusOfSphere; yDist += yStep)
+    {
+        float yVal = origin.y() + yDist;
+
+        Vector3f originOfDisk(origin.x(), yVal, origin.z());
+
+        float radiusOfDisk = sqrt(pow(radiusOfSphere, 2) - pow(yDist, 2));
+
+        addDiskOfParticles(originOfDisk, radiusOfDisk);
+    }
 }
 
 void SPHFluidSystem::emitParticle()

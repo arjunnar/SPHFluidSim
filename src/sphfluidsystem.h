@@ -27,7 +27,31 @@ class SPHFluidSystem : public ParticleSystem
         void draw();
         void reinitializeSystem();
         void advanceState();
+
         void emitParticle();
+        void toggleRotation()
+        {
+            rotEnabled = !rotEnabled;
+            rotSpeed = 0.2;
+        }
+
+        void moveToFasterRotSpeed()
+        {
+            if (rotEnabled)
+            {
+                rotSpeed = 0.35;
+            }
+        }
+
+        void toggleMarchingCubes()
+        {
+            renderWithMarchingCubes = !renderWithMarchingCubes;
+        }
+
+        void setMovingHorizontally(bool right);
+
+        // For water droplet simulation
+        void addSphereOfParticles(Vector3f origin, float radius);
 
    private:
         // Instance variables
@@ -51,9 +75,13 @@ class SPHFluidSystem : public ParticleSystem
         float SELF_DENSITY_CONSTANT;
         float SELF_LAPLACIAN_COLOR_FIELD;
 
-        // Other constants
+        // Other variables
         float MIN_DENSITY;
         float MAX_DENSITY;
+        float rotSpeed;
+        bool rotEnabled;
+        bool renderWithMarchingCubes;
+        Vector3f directionOfGravity;
 
         // Helper functions
         void calculateDensitiesAndPressures(vector<Vector3f> &state);
@@ -72,6 +100,7 @@ class SPHFluidSystem : public ParticleSystem
         // 3D system initializations
         void build3DTestSystemSimple();
         void build3DTestSystemLarge();
+        void build3DWaveSystem();
 
         // For emitting particles
         float angleToEmit;
@@ -83,6 +112,9 @@ class SPHFluidSystem : public ParticleSystem
         Vector3f locOfCannon2;
         Vector3f locOfCannon3;
 
+        // For adding a droplet of water
+        void addCircleOfParticles(Vector3f origin, float stepSize, float radius);
+        void addDiskOfParticles(Vector3f origin, float radius);
 
         // Not really used anymore
         void buildTwoParticleSystemNeighbors();
